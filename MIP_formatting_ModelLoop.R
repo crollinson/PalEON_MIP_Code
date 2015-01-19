@@ -1,12 +1,12 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
-#setwd("~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output")
+setwd("../")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
 #model.dir <- "~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output/"
-model.dir <- "phase1a_model_output"
+model.dir <- "phase1a_model_output/"
 
 #~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output
 # Models for which we have data
@@ -24,21 +24,22 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2", site.list[1])
-files.ed <- dir(dir.ed)                    
+dir.ed <- file.path(model.dir, "ED2.v1.2", site.list[1])
+files.ed <- dir(dir.ed)
 
-dir.clm <- file.path(model.dir, "CLM45", paste(site.list[1], "CLM45", sep="."))
+dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[1], "CLM45", sep="."))
 files.clm <- dir(dir.clm)
 
-dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
 files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
 files.lpj.g.y <- files.lpj.g[substr(files.lpj.g, index, index+5)=="annual"]
 
-dir.lpj.w <- file.path(model.dir, "LPJ-WSL")
+dir.lpj.w <- file.path(model.dir, "lpj-wsl.v4")
+files.lpj.w <- dir(dir.lpj.w)
 
-dir.jules.s <- file.path(model.dir, "JULES_STATIC", paste(site.list[1], "JULES_STATIC", sep="_"))
+dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[1], "JULES_STATIC", sep="_"))
 files.jules.s <- dir(dir.jules.s)
 
 
@@ -114,7 +115,7 @@ nc_close(ed); nc_close(clm); nc_close(lpj.g.m); nc_close(lpj.g.y); nc_close(lpj.
 ed <- list()
 ed.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed <- file.path(model.dir, "ED2", site.list[s])   
+  dir.ed <- file.path(model.dir, "ED2.v1.2", site.list[s])
   files.ed <- dir(dir.ed)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -162,7 +163,7 @@ for(i in 1:length(ed.var)){
 # -----------------------------------
 clm <- list() 
 for(s in 1:length(site.list)){
-  dir.clm <- file.path(model.dir, "CLM45", paste(site.list[s], "CLM45", sep="."))
+  dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[s], "CLM45", sep="."))
   files.clm <- dir(dir.clm)
   clm.var.list <- list()
   #-----------------------------------
@@ -209,7 +210,7 @@ for(i in 1:length(clm.var)){
 lpj.g <- list()
 lpj.pft <- c(which(lpj.g.var.y=="AGB"), which(lpj.g.var.y=="TotLivBiom"))
 for(s in 1:length(site.list)){
-  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[s], "LPJ-GUESS", sep="_"))   
+  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
   files.lpj.g <- dir(dir.lpj.g)
   
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -270,7 +271,7 @@ for(i in 1:length(lpj.g.var)){
 lpj.w <- list()
 var.pft.lpj.w <- c("LAI", "NPP")
 for(s in 1:length(site.list)){
-  dir.lpj.w <- file.path(model.dir, "LPJ-WSL")
+  dir.lpj.w <- file.path(model.dir, "lpj-wsl.v4")
   files.lpj.w <- dir(dir.lpj.w)
   lpj.w.var.list <- list()
   #-----------------------------------
@@ -312,7 +313,7 @@ for(i in 1:length(lpj.w.var)){
 pft.vars <- c("NPP", "LAI", "Qh", "Qle", "SnowDepth")
 jules.s <- list() 
 for(s in 1:length(site.list)){
-  dir.jules.s <- file.path(model.dir, "JULES_STATIC", paste(site.list[s], "JULES_STATIC", sep="_"))
+  dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[s], "JULES_STATIC", sep="_"))
   files.jules.s <- dir(dir.jules.s)
   jules.s.var.list <- list()
   #-----------------------------------
