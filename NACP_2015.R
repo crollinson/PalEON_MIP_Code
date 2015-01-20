@@ -14,6 +14,8 @@ setwd("../")
 outputs <- "phase1a_output_variables"
 years <- 850:2010
 
+large.axes <- theme(axis.line=element_line(color="black", size=0.5), panel.grid.major=element_blank(), panel.grid.minor= element_blank(), panel.border= element_blank(), panel.background= element_blank(), axis.text.x=element_text(angle=0, color="black", size=20), axis.text.y=element_text(color="black", size=20), axis.title.x=element_text(face="bold", size=24, vjust=-1),  axis.title.y=element_text(face="bold", size=24, vjust=2.5), plot.margin=unit(c(2,2,2,2), "lines"))
+
 # -------------------------------------------------------------------
 # Reading in .nc files of variables created using script in MIP_formatting_ModelLoop_Yr.R
 # -------------------------------------------------------------------
@@ -74,8 +76,6 @@ write.csv(df1, file.path(outputs, "MIP_Data_Ann_NACP2015.csv"), row.names=F)
 # -------------------------------------------------------------------
 df1 <- read.csv(file.path(outputs, "MIP_Data_Ann_NACP2015.csv"))
 summary(df1)
-
-large.axes <- theme(axis.line=element_line(color="black", size=0.5), panel.grid.major=element_blank(), panel.grid.minor= element_blank(), panel.border= element_blank(), panel.background= element_blank(), axis.text.x=element_text(angle=0, color="black", size=20), axis.text.y=element_text(color="black", size=20), axis.title.x=element_text(face="bold", size=24, vjust=-1),  axis.title.y=element_text(face="bold", size=24, vjust=2.5), plot.margin=unit(c(2,2,2,2), "lines"))
 
 levels(df1$Model) <- c("CLM4.5", "ED2", "JULES", "LPJ-GUESS", "LPJ-WSL")
 
@@ -155,17 +155,17 @@ for(i in unique(df1$Model)){
 summary(df1)
 
 
-ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
-	geom_point(aes(x=Temp.centered, y=GPP.centered, color=Site), size=0.8)
+# ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
+	# geom_point(aes(x=Temp.centered, y=GPP.centered, color=Site), size=0.8)
 
-ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
-	geom_point(aes(x=Precip.centered, y=GPP.centered, color=Site), size=0.8)
+# ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
+	# geom_point(aes(x=Precip.centered, y=GPP.centered, color=Site), size=0.8)
 
-ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
-	geom_point(aes(x=Temp.centered, y=AGB.centered, color=Site))
+# ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
+	# geom_point(aes(x=Temp.centered, y=AGB.centered, color=Site))
 
-ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
-	geom_point(aes(x=Precip.centered, y=AGB.centered, color=Site))
+# ggplot(data=df1) + large.axes + facet_grid(Model ~ .) +
+	# geom_point(aes(x=Precip.centered, y=AGB.centered, color=Site))
 
 
 temp.max <- data.frame(array(dim=c(0,ncol(df1))))
@@ -178,14 +178,21 @@ for(s in unique(df1$Site)){
 	precip.max <- rbind(precip.max, df1[df1$Site==s & df1$Precip > precip.extremes[2,s],])
 	precip.min <- rbind(precip.min, df1[df1$Site==s & df1$Precip < precip.extremes[1,s],])
 }
-
+temp.max$Anomaly <- as.factor("Tmax")
+temp.min$Anomaly <- as.factor("Tmin")
+precip.max$Anomaly <- as.factor("Pmax")
+precip.min$Anomaly <- as.factor("Pmin")
 summary(temp.max)
 summary(temp.min)
 summary(precip.max)
 summary(precip.min)
 
-by(temp.max$GPP.centered, temp.max$Model, FUN=mean)
-by(temp.min$GPP.centered, temp.max$Model, FUN=mean)
+# Some quick t-tests
+t.test(df1$GPP.centered, temp.max$GPP.centered)
+t.test(df1$GPP.centered, precip.min$GPP.centered)
+t.test(df1$GPP.centered, precip.max$GPP.centered)
+t.test(df1$GPP.centered, temp.min$GPP.centered)
+
 
 lm.tmax <- lm(GPP.centered ~ Model -1, data=temp.max)
 lm.tmin <- lm(GPP.centered ~ Model -1, data=temp.min)
@@ -196,6 +203,53 @@ lm.pmax <- lm(GPP.centered ~ Model - 1, data=precip.max)
 lm.pmin <- lm(GPP.centered ~ Model - 1, data=precip.min)
 summary(lm.pmax)
 summary(lm.pmin)
+
+
+
+
+extremes <- rbind(temp.max, temp.min, precip.max, precip.min)
+summary(extremes)
+
+ggplot(data=extremes) + large.axes + facet_grid(Anomaly ~ .) +
+	geom_boxplot(aes(x=Model, y=GPP.centered), color="red", fill="red")
+
+
+extremes2 <- aggregate(extremes[,c("GPP.centered", "AGB.centered")], by=list(extremes$Anomaly, extremes$Model), FUN=mean, na.rm=T)
+names(extremes2) <- c("Anomaly", "Model", "GPP", "AGB")
+summary(extremes2)
+
+
+extremes2sd <- aggregate(extremes[,c("GPP.centered", "AGB.centered")], by=list(extremes$Anomaly, extremes$Model), FUN=sd, na.rm=T)
+names(extremes2sd) <- c("Anomaly", "Model", "GPP", "AGB")
+summary(extremes2sd)
+
+
+extremes2$GPP.sd <- extremes2sd$GPP
+extremes2$AGB.sd <- extremes2sd$AGB
+
+ggplot(data=extremes2) + large.axes + facet_grid(Anomaly ~ .) +
+	geom_point(aes(x=Model, y=GPP), size=5) +
+	geom_hline(aes(yintercept=0), size=0.1) +
+	geom_errorbar(aes(x=Model, ymax=GPP+GPP.sd, ymin=GPP-GPP.sd), width=0.25)
+
+levels(extremes2$Anomaly) <- c("Max Temp", "Min Temp", "Max Precip", "Min Precip")
+
+pdf("Figures/NACP2015_GPP_Deviation.pdf", width=10, height=8)
+ggplot(data=extremes2[extremes2$Anomaly=="Max Temp" | extremes2$Anomaly=="Min Precip",]) + large.axes + facet_grid(Anomaly ~ .) +
+	geom_point(aes(x=Model, y=GPP, color=Anomaly), size=5) +
+	geom_hline(aes(yintercept=0), size=0.1) +
+	geom_errorbar(aes(x=Model, ymax=GPP+GPP.sd, ymin=GPP-GPP.sd, color=Anomaly), width=0.25, size=1.5) +
+	scale_y_continuous(name="GPP Percent Change") +
+	scale_x_discrete(name="Model") + 
+	scale_color_manual(values=c("red", "blue")) + guides(color=F) +
+	theme(strip.text.y=element_text(size=18, face="bold"), strip.background=element_rect(fill="gray80"))
+dev.off()
+
+
+
+by(temp.max$GPP.centered, temp.max$Model, FUN=mean)
+by(temp.min$GPP.centered, temp.max$Model, FUN=mean)
+
 
 dim(temp.max)
 dim(temp.min)
@@ -213,3 +267,4 @@ ggplot() + large.axes +
 	geom_boxplot(data=precip.max, aes(x=Model, y=GPP.centered), color="blue", fill="NA")
 
 t.test(abs(precip.min$GPP.centered), abs(precip.max$GPP.centered))
+t.test(abs(temp.min$GPP.centered), abs(temp.max$GPP.centered))
