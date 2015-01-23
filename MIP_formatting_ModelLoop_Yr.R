@@ -20,7 +20,7 @@ lpj.g.soilC <- data.frame(array(NA, dim=dim(lpj.w[["TotSoilCarb"]]))); names(lpj
 
 
 for(s in 1:length(site.list)){
-  yr.rows <- seq(1, length(ed[["AGB"]][,s])-12, by=12)
+  yr.rows <- seq(1, length(ed[["AGB"]][,s]), by=12)
 
 	#---------------------------------------------------------------------
 	# DIVERSITY / STRUCTURE
@@ -414,15 +414,21 @@ units.fluxes <- "kg m-2 s-1"
 models.all <- names(GPP.y[[1]])
 models.3 <- names(tair.y[[1]])
 
-GPP.vars <- AGB.vars <- Temp.vars <- Precip.vars <- list()
+GPP.vars <- AGB.vars <- LAI.vars <- NEE.vars <- NPP.vars <- Temp.vars <- Precip.vars <- list()
 for(i in 1:length(site.list)){
 	GPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	AGB.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	NEE.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	NPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	Temp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.3mods, dim.years))
 	Precip.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.3mods, dim.years))
 }	
 GPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 AGB.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+LAI.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+NPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+NEE.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 Temp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.3mods2), prec="char")
 Precip.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.3mods2), prec="char")
 
@@ -432,16 +438,26 @@ summary(GPP.vars)
 output.location <- "phase1a_output_variables"
 gpp <- nc_create(file.path(output.location, "GPP.annual.nc"), GPP.vars)
 agb <- nc_create(file.path(output.location, "AGB.annual.nc"), AGB.vars)
+lai <- nc_create(file.path(output.location, "LAI.annual.nc"), LAI.vars)
+npp <- nc_create(file.path(output.location, "NPP.annual.nc"), NPP.vars)
+nee <- nc_create(file.path(output.location, "NEE.annual.nc"), NEE.vars)
 temp <- nc_create(file.path(output.location, "Temp.annual.nc"), Temp.vars)
 precip <- nc_create(file.path(output.location, "Precip.annual.nc"), Precip.vars)
+
 for(i in 1:length(site.list)){
 	ncvar_put(gpp, GPP.vars[[i]], t(GPP.y[[i]]))
 	ncvar_put(agb, AGB.vars[[i]], t(AGB.y[[i]]))
+	ncvar_put(lai, LAI.vars[[i]], t(LAI.y[[i]]))
+	ncvar_put(npp, NPP.vars[[i]], t(NPP.y[[i]]))
+	ncvar_put(nee, NEE.vars[[i]], t(NEE.y[[i]]))
 	ncvar_put(temp, Temp.vars[[i]], t(tair.y[[i]]))
 	ncvar_put(precip, Precip.vars[[i]], t(precipf.y[[i]]))
 }
 ncvar_put(gpp, GPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(agb, AGB.vars[[length(site.list)+1]], models.all)
+ncvar_put(lai, LAI.vars[[length(site.list)+1]], models.all)
+ncvar_put(npp, NPP.vars[[length(site.list)+1]], models.all)
+ncvar_put(nee, NEE.vars[[length(site.list)+1]], models.all)
 ncvar_put(temp, Temp.vars[[length(site.list)+1]], models.3)
 ncvar_put(precip, Precip.vars[[length(site.list)+1]], models.3)
 
@@ -683,6 +699,8 @@ summary(Fcomp.y[[1]])
 # Met Checking
 # --------------------------------------------------------------------------------
 # Tair
+
+#pdf(width=8.5, height=11, file="PrelimGraphs/Tair_Annual_AllSites.pdf")
 summary(tair.y[[1]])
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
@@ -705,3 +723,67 @@ for(s in 1:length(site.list)){
 	if(s==5) legend("topleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
 }
 
+#------------------------------------------
+# tair
+pdf("PrelimGraphs/MetDrivers_Tair_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(tair.y[[s]][,"ed2"], ylim=range(tair.y[[s]][["ed2"]], na.rm=T)-273, type="l", lwd=1, ylab="Air Temp", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# precipf
+pdf("PrelimGraphs/MetDrivers_precipf_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Precip", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# psurf
+pdf("PrelimGraphs/MetDrivers_psurf_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(psurf.y[[s]][,"ed2"], ylim=range(psurf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Psurf", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# qair
+pdf("PrelimGraphs/MetDrivers_qair_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(qair.y[[s]][,"ed2"], ylim=range(qair.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Qair", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# wind
+pdf("PrelimGraphs/MetDrivers_wind_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(wind.y[[s]][,"ed2"], ylim=range(wind.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Wind", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# co2
+# pdf("PrelimGraphs/MetDrivers_co2_Annual_AllSites.pdf")
+# par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(co2.y[[s]][,"ed2"], ylim=range(co2.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="CO2", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
+
+# lwdown
+pdf("PrelimGraphs/MetDrivers_lwdown_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="lwdown", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()
+
+# swdown
+pdf("PrelimGraphs/MetDrivers_swdown_Annual_AllSites.pdf")
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="swdown", xlab="years since 850-01-01", main=paste(site.list[s]))
+}
+dev.off()

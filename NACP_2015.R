@@ -21,32 +21,74 @@ large.axes <- theme(axis.line=element_line(color="black", size=0.5), panel.grid.
 # -------------------------------------------------------------------
 gpp <- nc_open(file.path(outputs, "GPP.annual.nc"))
 agb <- nc_open(file.path(outputs, "AGB.annual.nc"))
+lai <- nc_open(file.path(outputs, "LAI.annual.nc"))
+npp <- nc_open(file.path(outputs, "NPP.annual.nc"))
+nee <- nc_open(file.path(outputs, "NEE.annual.nc"))
 temp <- nc_open(file.path(outputs, "Temp.annual.nc"))
 precip <- nc_open(file.path(outputs, "Precip.annual.nc"))
 
-summary(gpp$var)
+gpp.sib <- read.csv("phase1a_model_output/Sib-CASA.v0/Sib-CASA_GPP_Month.csv") #kg/m2/s
+agb.sib <- read.csv("phase1a_model_output/Sib-CASA.v0/Sib-CASA_AGB_Month.csv") #kg/m2
+lai.sib <- read.csv("phase1a_model_output/Sib-CASA.v0/Sib-CASA_LAI_Month.csv") #kg/m2
+nee.sib <- read.csv("phase1a_model_output/Sib-CASA.v0/Sib-CASA_NEE_Month.csv") #kg/m2
+npp.sib <- read.csv("phase1a_model_output/Sib-CASA.v0/Sib-CASA_NPP_Month.csv") #kg/m2
 
-GPP <- AGB <- TEMP <- PRECIP <- list()
+summary(agb.sib) 
+
+yr.rows <- seq(1, nrow(gpp.sib)-12, by=12)
+
+gpp.sib.yr <- agb.sib.yr <- lai.sib.yr <- npp.sib.yr <- nee.sib.yr <- data.frame(array(dim=c(nrow(gpp.sib)/12, ncol(gpp.sib))))
+names(gpp.sib.yr) <- names(agb.sib.yr) <- names(lai.sib.yr) <- names(npp.sib.yr) <- names(nee.sib.yr) <- names(gpp.sib)
+
+for(s in 1:ncol(gpp.sib)){
+	gpp.temp <-	agb.temp <- lai.temp <- npp.temp <- nee.temp <- vector()
+	for(i in 1:length(yr.rows)){
+		gpp.temp <- c(gpp.temp, mean(gpp.sib[yr.rows[i]:(yr.rows[i]+11),s],na.rm=T))
+		agb.temp <- c(agb.temp, mean(agb.sib[yr.rows[i]:(yr.rows[i]+11),s], na.rm=T))
+		lai.temp <- c(lai.temp, mean(lai.sib[yr.rows[i]:(yr.rows[i]+11),s], na.rm=T))
+		npp.temp <- c(npp.temp, mean(npp.sib[yr.rows[i]:(yr.rows[i]+11),s], na.rm=T))
+		nee.temp <- c(nee.temp, mean(nee.sib[yr.rows[i]:(yr.rows[i]+11),s], na.rm=T))
+	}
+	gpp.sib.yr[,s] <- c(gpp.temp, NA)
+	agb.sib.yr[,s] <- c(agb.temp, NA)
+	lai.sib.yr[,s] <- c(lai.temp, NA)
+	npp.sib.yr[,s] <- c(npp.temp, NA)
+	nee.sib.yr[,s] <- c(nee.temp, NA)
+}
+summary(gpp.sib.yr)
+summary(agb.sib.yr)
+summary(lai.sib.yr)
+summary(npp.sib.yr)
+summary(nee.sib.yr)
+
+
+GPP <- AGB <- LAI <- NPP <- NEE <- TEMP <- PRECIP <- list()
 for(i in 1:6){
-	GPP[[i]] <- data.frame(t(ncvar_get(gpp, names(gpp$var)[i])))
-	AGB[[i]] <- data.frame(t(ncvar_get(agb, names(agb$var)[i])))
-	TEMP[[i]] <- data.frame(t(ncvar_get(temp, names(temp$var)[i])))
-	PRECIP[[i]] <- data.frame(t(ncvar_get(precip, names(precip$var)[i])))
+	GPP[[i]] <- data.frame(cbind(t(ncvar_get(gpp, names(gpp$var)[i])), gpp.sib.yr[,i]))
+	AGB[[i]] <- data.frame(cbind(t(ncvar_get(agb, names(agb$var)[i])), agb.sib.yr[,i]))
+	LAI[[i]] <- data.frame(cbind(t(ncvar_get(lai, names(lai$var)[i])), lai.sib.yr[,i]))
+	NPP[[i]] <- data.frame(cbind(t(ncvar_get(npp, names(npp$var)[i])), npp.sib.yr[,i]))
+	NEE[[i]] <- data.frame(cbind(t(ncvar_get(nee, names(nee$var)[i])), nee.sib.yr[,i]))
+	TEMP[[i]] <- data.frame(cbind(t(ncvar_get(temp, names(temp$var)[i])), ncvar_get(temp, names(temp$var)[i])[1,]))
+	PRECIP[[i]] <- data.frame(cbind(t(ncvar_get(precip, names(precip$var)[i])), ncvar_get(precip, names(precip$var)[i])[1,]))
 
-	names(GPP[[i]]) <- ncvar_get(gpp, "ModelNames")
-	names(AGB[[i]]) <- ncvar_get(agb, "ModelNames")
-	names(TEMP[[i]]) <- ncvar_get(temp, "ModelNames")
-	names(PRECIP[[i]]) <- ncvar_get(precip, "ModelNames")		
+	names(GPP[[i]]) <- c(ncvar_get(gpp, "ModelNames"), "SiB")
+	names(AGB[[i]]) <- c(ncvar_get(agb, "ModelNames"), "SiB")
+	names(LAI[[i]]) <- c(ncvar_get(lai, "ModelNames"), "SiB")
+	names(NPP[[i]]) <- c(ncvar_get(npp, "ModelNames"), "SiB")
+	names(NEE[[i]]) <- c(ncvar_get(nee, "ModelNames"), "SiB")
+	names(TEMP[[i]]) <- c(ncvar_get(temp, "ModelNames"), "SiB")
+	names(PRECIP[[i]]) <- c(ncvar_get(precip, "ModelNames"), "SiB")
 	row.names(GPP[[i]]) <- years
 	row.names(AGB[[i]]) <- years
 	row.names(TEMP[[i]]) <- years
 	row.names(PRECIP[[i]]) <- years
 }
-names(GPP) <- names(AGB) <- names(TEMP) <- names(PRECIP) <- names(gpp$var)[1:6]
+names(GPP) <- names(AGB) <- names(LAI) <- names(NPP) <- names(NEE) <- names(TEMP) <- names(PRECIP) <- names(gpp$var)[1:6]
 
-nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip)
+nc_close(gpp); nc_close(agb); nc_close(lai); nc_close(npp); nc_close(nee); nc_close(temp); nc_close(precip)
 
-df1 <- data.frame(array(dim=c(0,7)))
+df1 <- data.frame(array(dim=c(0,10)))
 for(i in 1:6){
 	gpp.df <- stack(GPP[[i]])
 	names(gpp.df) <- c("GPP", "Model")
@@ -57,14 +99,26 @@ for(i in 1:6){
 	names(agb.df) <- c("AGB", "Model")
 	agb.df$Site <- as.factor(names(AGB)[i])
 
+	lai.df <- stack(LAI[[i]])
+	names(lai.df) <- c("LAI", "Model")
+	lai.df$Site <- as.factor(names(LAI)[i])
+
+	npp.df <- stack(NPP[[i]])
+	names(npp.df) <- c("NPP", "Model")
+	npp.df$Site <- as.factor(names(NPP)[i])
+
+	nee.df <- stack(NEE[[i]])
+	names(nee.df) <- c("NEE", "Model")
+	nee.df$Site <- as.factor(names(NEE)[i])
+
 	temp.ed <- TEMP[[i]][,"ed2"]
 	precip.ed <- PRECIP[[i]][,"ed2"]
 
-	df1 <- rbind(df1, cbind(gpp.df, agb.df$AGB, temp.ed, precip.ed))
+	df1 <- rbind(df1, cbind(gpp.df, agb.df$AGB, lai.df$LAI, npp.df$NPP, nee.df$NEE, temp.ed, precip.ed))
 
 	}
-names(df1) <- c("GPP", "Model", "Site", "Year", "AGB", "Temp", "Precip")
-df1 <- df1[,c("Site", "Model", "Year", "GPP", "AGB", "Temp", "Precip")]
+names(df1) <- c("GPP", "Model", "Site", "Year", "AGB", "LAI", "NPP", "NEE", "Temp", "Precip")
+df1 <- df1[,c("Site", "Model", "Year", "GPP", "AGB", "LAI", "NPP", "NEE", "Temp", "Precip")]
 summary(df1)
 
 write.csv(df1, file.path(outputs, "MIP_Data_Ann_NACP2015.csv"), row.names=F)
@@ -77,47 +131,106 @@ write.csv(df1, file.path(outputs, "MIP_Data_Ann_NACP2015.csv"), row.names=F)
 df1 <- read.csv(file.path(outputs, "MIP_Data_Ann_NACP2015.csv"))
 summary(df1)
 
-levels(df1$Model) <- c("CLM4.5", "ED2", "JULES", "LPJ-GUESS", "LPJ-WSL")
+levels(df1$Model) <- c("CLM4.5", "ED2", "JULES", "LPJ-GUESS", "LPJ-WSL", "SiBCASA")
 
 sec_2_yr <- 60*60*24*365
 kgm2_2_MgHa <- (1/1000) * 10000
 
 MgCHayr <- sec_2_yr*kgm2_2_MgHa
 
-model.colors <- c("black", "blue", "red", "green3", "orange3")
+model.colors <- c("black", "cyan4", "hotpink3", "green3", "orange3", "steelblue3")
+
+library(car)
+df1$Model.Order <- recode(df1$Model, "'ED2'='1'; 'CLM4.5'='2'; 'LPJ-WSL'='3'; 'LPJ-GUESS'='4'; 'JULES'='5'; 'SiBCASA'='6'")
+levels(df1$Model.Order) <- c("ED2", "CLM4.5", "LPJ-WSL", "LPJ-GUESS", "JULES", "SibCASA")
+summary(df1)
+
+#sec_2_mo
+# Precip Conversion: right now we have mean monthly rate/mo = mm/yr
+#	A seconds to year = 60 sec/min * 60 min/hr * 24 hr/day * 365 day/yr = s/y
+#	B kg to mm3 = 1000 g/kg = 1000 cm3 * 10*10*10 mm3/cm3 = mm3/kg
+#	C m2 to mm2 = 1e6 mm2/m2 = mm2/m2
+# kg m-2 s-1 = B * A * 1/c 
+
+precip.conversion <- 1 * ((60*60*24*365)) * (1e3 * 1e3) * (1e-6)
+
+summary(df1$Precip*60*60*24*30.4) # so this is mean monthly precip 
+precip.month <- df1$Precip*60*60*24*30.4 # kg/m2/mo = cm/mo
+
+precip.month <- df1$Precip*precip.conversion
+summary(precip.month)
+summary(precip.month*12/10)
+
+
+
 
 pdf("Figures/NACP2015_GPP_PHA.pdf", width=10, height=6)
 ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
-	geom_line(aes(x=Year, y=GPP*MgCHayr, color=Model), size=1) +
-	scale_y_continuous(name=expression(bold(paste("GPP (MgC Ha"^"-1"," yr"^"-1",")")))) +
+	geom_line(aes(x=Year, y=GPP*MgCHayr, color=Model.Order), size=1.5) +
+	scale_y_continuous(name=expression(bold(paste("GPP (MgC ha"^"-1"," yr"^"-1",")")))) +
 	scale_x_continuous(name="Year") +
 	scale_color_manual(values=model.colors) + labs(color="Models") +
- 	theme(legend.position=c(0.15,0.8), legend.text=element_text(size=18), legend.title=element_text(size=20), legend.key=element_rect(fill="white"), legend.key.width=unit(2, "line"))
+ 	theme(legend.position=c(0.25,0.9), legend.text=element_text(size=18), legend.title=element_text(size=20), legend.key=element_rect(fill="white"), legend.key.width=unit(2, "line")) + guides(col=guide_legend(ncol=2))
 dev.off()
 
 pdf("Figures/NACP2015_AGB_PHA.pdf", width=10, height=6)
 ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
-	geom_line(aes(x=Year, y=AGB*kgm2_2_MgHa, color=Model), size=1) +
-	scale_y_continuous(name=expression(bold(paste("AGB (MgC Ha"^"-1",")")))) +
+	geom_line(aes(x=Year, y=AGB*kgm2_2_MgHa, color=Model.Order), size=1.5) +
+	scale_y_continuous(name=expression(bold(paste("AGB (MgC ha"^"-1",")")))) +
+	scale_x_continuous(name="Year") +
+	scale_color_manual(values=model.colors) + labs(color="Models")  + 
+ 	theme(axis.title.y=element_text(vjust=1)) +
+	guides(color=F)
+dev.off()	
+
+pdf("Figures/NACP2015_LAI_PHA.pdf", width=10, height=6)
+ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
+	geom_line(aes(x=Year, y=LAI, color=Model.Order), size=1.5) +
+	scale_y_continuous(name=expression(bold(paste("LAI (m"^"2"," m"^"-2",")")))) +
+	scale_x_continuous(name="Year") +
+	scale_color_manual(values=model.colors) + labs(color="Models")  + 
+ 	theme(axis.title.y=element_text(vjust=3)) +
+	guides(color=F)
+dev.off()	
+
+pdf("Figures/NACP2015_NPP_PHA.pdf", width=10, height=6)
+ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
+	geom_line(aes(x=Year, y=NPP*MgCHayr, color=Model.Order), size=1.5) +
+	scale_y_continuous(name=expression(bold(paste("NPP (MgC ha"^"-1"," yr"^"-1",")")))) +
+	scale_x_continuous(name="Year") +
+	scale_color_manual(values=model.colors) + labs(color="Models") +
+ 	theme(legend.position=c(0.25,0.9), legend.text=element_text(size=18), legend.title=element_text(size=20), legend.key=element_rect(fill="white"), legend.key.width=unit(2, "line")) + 
+ 	theme(axis.title.y=element_text(vjust=3)) +
+ 	guides(col=guide_legend(ncol=2))
+dev.off()	
+
+pdf("Figures/NACP2015_NEE_PHA.pdf", width=10, height=6)
+ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
+	geom_line(aes(x=Year, y=NEE* MgCHayr, color=Model.Order), size=1.5) +
+	scale_y_continuous(name=expression(bold(paste("NEE (MgC ha"^"-1"," yr"^"-1",")")))) +
 	scale_x_continuous(name="Year") +
 	scale_color_manual(values=model.colors) + labs(color="Models") +
 	guides(color=F)
 dev.off()	
+
+
+
 
 pdf("Figures/NACP2015_Temperature_ED2_PHA.pdf", width=10, height=3)
 ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
 	geom_line(aes(x=Year, y=Temp-273.15), size=0.8, color="red") +
 	scale_y_continuous(name=expression(bold(paste("Temp ("^"o","C)")))) +
 	scale_x_continuous(name="Year")  +
-	theme(axis.text.x=element_text(angle=0, color="black", size=16), axis.text.y=element_text(color="black", size=18), axis.title.x=element_text(face="bold", size=24, vjust=-1),  axis.title.y=element_text(face="bold", size=18, vjust=2.5))
+	theme(axis.text.x=element_text(angle=0, color="black", size=18), axis.text.y=element_text(color="black", size=20), axis.title.x=element_text(face="bold", size=28, vjust=-1),  axis.title.y=element_text(face="bold", size=20, vjust=2))
 dev.off()	
 
 pdf("Figures/NACP2015_Precip_Rate_ED2_PHA.pdf", width=10, height=3)
 ggplot(data=df1[df1$Site=="PHA",]) + large.axes +
-	geom_line(aes(x=Year, y=Precip*sec_2_yr), size=0.8, color="blue") +
-	scale_y_continuous(name=expression(bold(paste("Precip (kg m"^"-2", " yr"^"-1",")")))) +
+	geom_line(aes(x=Year, y=Precip*precip.conversion*1e-3), size=0.8, color="blue") +
+	scale_y_continuous(name=expression(bold(paste("Precip (m yr"^"-1",")"))), breaks=c(0.8,1,1.2, 1.4, 1.6)) +
+	# scale_y_continuous(name=expression(bold(paste("Precip (m/yr)")))) +
 	scale_x_continuous(name="Year") +
-	theme(axis.text.x=element_text(angle=0, color="black", size=16), axis.text.y=element_text(color="black", size=18), axis.title.x=element_text(face="bold", size=24, vjust=-1),  axis.title.y=element_text(face="bold", size=18, vjust=2.5))
+	theme(axis.text.x=element_text(angle=0, color="black", size=18), axis.text.y=element_text(color="black", size=18), axis.title.x=element_text(face="bold", size=24, vjust=-1),  axis.title.y=element_text(face="bold", size=20, vjust=1.5))
 dev.off()	
 # -------------------------------------------------------------------
 
@@ -204,7 +317,13 @@ lm.pmin <- lm(GPP.centered ~ Model - 1, data=precip.min)
 summary(lm.pmax)
 summary(lm.pmin)
 
+t.test(abs(precip.min$GPP.centered), abs(temp.max$GPP.centered))
 
+# Comparing sensitivities of AGB & Precip
+t.test(abs(precip.min$AGB.centered), abs(precip.min$GPP.centered), paired=T)
+t.test(abs(temp.max$AGB.centered), abs(temp.max$GPP.centered), paired=T)
+t.test(abs(precip.max$AGB.centered), abs(precip.max$GPP.centered), paired=T)
+t.test(abs(temp.min$AGB.centered), abs(temp.min$GPP.centered), paired=T)
 
 
 extremes <- rbind(temp.max, temp.min, precip.max, precip.min)
@@ -234,12 +353,12 @@ ggplot(data=extremes2) + large.axes + facet_grid(Anomaly ~ .) +
 
 levels(extremes2$Anomaly) <- c("Max Temp", "Min Temp", "Max Precip", "Min Precip")
 
-pdf("Figures/NACP2015_GPP_Deviation.pdf", width=10, height=8)
+pdf("Figures/NACP2015_GPP_Deviation.pdf", width=12, height=7)
 ggplot(data=extremes2[extremes2$Anomaly=="Max Temp" | extremes2$Anomaly=="Min Precip",]) + large.axes + facet_grid(Anomaly ~ .) +
-	geom_point(aes(x=Model, y=GPP, color=Anomaly), size=5) +
+	geom_point(aes(x=Model, y=GPP*100, color=Anomaly), size=5) +
 	geom_hline(aes(yintercept=0), size=0.1) +
-	geom_errorbar(aes(x=Model, ymax=GPP+GPP.sd, ymin=GPP-GPP.sd, color=Anomaly), width=0.25, size=1.5) +
-	scale_y_continuous(name="GPP Percent Change") +
+	geom_errorbar(aes(x=Model, ymax=(GPP+GPP.sd)*100, ymin=(GPP-GPP.sd)*100, color=Anomaly), width=0.25, size=1.5) +
+	scale_y_continuous(name="Percent Change in GPP") +
 	scale_x_discrete(name="Model") + 
 	scale_color_manual(values=c("red", "blue")) + guides(color=F) +
 	theme(strip.text.y=element_text(size=18, face="bold"), strip.background=element_rect(fill="gray80"))

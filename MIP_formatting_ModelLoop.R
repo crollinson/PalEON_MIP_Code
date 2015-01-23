@@ -27,7 +27,8 @@ mo2sec <- 1/(12*24*60*60)
 dir.ed <- file.path(model.dir, "ED2.v1.2", site.list[1])
 files.ed <- dir(dir.ed)
 
-dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[1], "CLM45", sep="."))
+# dir.clm <- file.path(model.dir, "CLM45.v", paste(site.list[1], "CLM45", sep="."))
+dir.clm <- file.path(model.dir, "CLM45.v3", site.list[1])
 files.clm <- dir(dir.clm)
 
 dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
@@ -163,7 +164,8 @@ for(i in 1:length(ed.var)){
 # -----------------------------------
 clm <- list() 
 for(s in 1:length(site.list)){
-  dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[s], "CLM45", sep="."))
+#  dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[s], "CLM45", sep="."))
+  dir.clm <- file.path(model.dir, "CLM45.v3", site.list[s])
   files.clm <- dir(dir.clm)
   clm.var.list <- list()
   #-----------------------------------
@@ -534,4 +536,46 @@ lines(SnowDepth[[1]][,"clm45"], col="green3", lwd=.3)
 lines(SnowDepth[[1]][,"jules.stat"], col="orange3", lwd=.5)
 legend("topleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bg="white")
 
+##------------------------------------------------------
+summary(ed)
+pdf("PrelimGraphs/MetDrivers_Tair_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["tair"]])){
+	plot(ed[["tair"]][,1], type="l", ylim=range(ed[["tair"]], na.rm=T), lwd=0.25, main=names(ed[["tair"]])[i], ylab="Monthly Temp")
+}
+dev.off()
 
+pdf("PrelimGraphs/MetDrivers_precipf_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["precipf"]])){
+	plot(ed[["precipf"]][,1], type="l", ylim=range(ed[["precipf"]], na.rm=T), lwd=0.25, main=names(ed[["precipf"]])[i], ylab="Monthly Precip")
+}
+dev.off()
+
+pdf("PrelimGraphs/MetDrivers_psurf_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["psurf"]])){
+	plot(ed[["psurf"]][,1], type="l", ylim=range(ed[["psurf"]], na.rm=T), lwd=0.25, main=names(ed[["psurf"]])[i], ylab="Monthly Psurf")
+}
+dev.off()
+
+pdf("PrelimGraphs/MetDrivers_qair_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["qair"]])){
+	plot(ed[["qair"]][,1], type="l", ylim=range(ed[["qair"]], na.rm=T), lwd=0.25, main=names(ed[["qair"]])[i], ylab="Monthly Qair")
+}
+dev.off()
+
+pdf("PrelimGraphs/MetDrivers_lwdown_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["lwdown"]])){
+	plot(ed[["lwdown"]][,1], type="l", ylim=range(ed[["lwdown"]], na.rm=T), lwd=0.25, main=names(ed[["lwdown"]])[i], ylab="Monthly LWdown")
+}
+dev.off()
+
+pdf("PrelimGraphs/MetDrivers_swdown_Monthly.pdf")
+par(mfrow=c(3,2))
+for(i in 1:ncol(ed[["swdown"]])){
+	plot(ed[["swdown"]][,1], type="l", ylim=range(ed[["swdown"]], na.rm=T), lwd=0.25, main=names(ed[["swdown"]])[i], ylab="Monthly swdown")
+}
+dev.off()
