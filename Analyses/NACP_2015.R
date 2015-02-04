@@ -10,7 +10,7 @@ library(ggplot2)
 library(grid)
 library(nlme)
 
-setwd("../")
+setwd("../..")
 outputs <- "phase1a_output_variables"
 years <- 850:2010
 

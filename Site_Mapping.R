@@ -28,3 +28,7 @@ plot(tavg, legend.only=T, legend.args=list(text=expression(bold(paste("Temperatu
 map("state", plot=T, add=T, lty="solid", col="gray30", lwd=1.5)
 plot(sites, add=T, pch=19, cex=2, col="green3")
 dev.off()
+
+setveg.biom <- read.csv(file.path(spatdat.dir, "plss_biomass_v0.9-1.csv"))
+setveg.biom$Total <- rowSums(setveg.biom[,5:ncol(setveg.biom)])
+summary(setveg.biom)
