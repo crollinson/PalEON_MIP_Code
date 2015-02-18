@@ -7,7 +7,7 @@
 # ---------------------------------------------- #
 # Variables that exist for all models, but need to be aggregated to year for comparision with LPJ
 
-AGB.y <- TotLivBiom <- TotSoilCarb <- LAI.y <- NPP.y <- NEE.y <- NPP.y <- HeteroResp.y <- AutoResp.y <- GPP.y <- LAI.y  <- Qs.y <- SoilMoist.y <- SoilTemp.y <- Evap.y <- Transp.y <- Fcomp.y <- Dens.y <- BA.y <- list()
+AGB.y <- TotLivBiom <- TotSoilCarb <- LAI.y <- GPP.y <- NEE.y <- NPP.y <- HeteroResp.y <- AutoResp.y <- LAI.y  <- Qs.y <- SoilMoist.y <- SoilTemp.y <- Evap.y <- Transp.y <- Fcomp.y <- Dens.y <- BA.y <- list()
 
 tair.y <- precipf.y <- wind.y <- lwdown.y <- swdown.y <- qair.y <- psurf.y <- list()
 
@@ -52,8 +52,8 @@ for(s in 1:length(site.list)){
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    Fcomp.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["Dens"]][,s], lpj.g[["Dens"]][,s]))  
-    names(Fcomp.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
+    Dens.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["Dens"]][,s], lpj.g[["Dens"]][,s]))  
+    names(Dens.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
 
 
     #-----------------------------------
@@ -67,8 +67,8 @@ for(s in 1:length(site.list)){
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    Fcomp.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["BA"]][,s], lpj.g[["BA"]][,s]))  
-    names(Fcomp.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
+    BA.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["BA"]][,s], lpj.g[["BA"]][,s]))  
+    names(BA.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
 	#---------------------------------------------------------------------
 	# CARBON FLUXES
 	#---------------------------------------------------------------------
@@ -399,6 +399,12 @@ for(s in 1:length(site.list)){
 
 
 }
+
+
+names(AGB.y) <- names(TotLivBiom) <- names(TotSoilCarb) <- names(LAI.y) <- names(GPP.y) <- names(NEE.y) <- names(NPP.y) <- names(HeteroResp.y) <- names(AutoResp.y) <- names(LAI.y)  <- names(Qs.y) <- names(SoilMoist.y) <- names(SoilTemp.y) <- names(Evap.y) <- names(Transp.y) <- names(Fcomp.y) <- names(Dens.y) <- names(BA.y) <- site.list
+
+
+
 
 # ----------------------------------------------------------------------------
 # Storing key variables as .nc files
