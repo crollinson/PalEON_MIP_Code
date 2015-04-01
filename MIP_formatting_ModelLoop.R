@@ -24,23 +24,26 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v1.2", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[1])
 files.ed <- dir(dir.ed)
 
 # dir.clm <- file.path(model.dir, "CLM45.v", paste(site.list[1], "CLM45", sep="."))
-dir.clm <- file.path(model.dir, "CLM45.v3", site.list[1])
+dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", site.list[1])
+# dir.clm <- file.path(model.dir, "CLM45.v3", site.list[1])
 files.clm <- dir(dir.clm)
 
-dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+# dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
 files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
 files.lpj.g.y <- files.lpj.g[substr(files.lpj.g, index, index+5)=="annual"]
 
-dir.lpj.w <- file.path(model.dir, "lpj-wsl.v4")
+dir.lpj.w <- file.path(model.dir, "LPJ-WSL.v5")
 files.lpj.w <- dir(dir.lpj.w)
 
-dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[1], "JULES_STATIC", sep="_"))
+dir.jules.s <- file.path(model.dir, "Version1_OldMet", "JULES.v1", paste(site.list[1], "JULES_STATIC", sep="_"))
+# dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[1], "JULES_STATIC", sep="_"))
 files.jules.s <- dir(dir.jules.s)
 
 
@@ -65,8 +68,8 @@ jules.s.var2 <- c("TotLivBiom", jules.s.var[2:length(jules.s.var)])
 # PFT-level variables need to be dealt with slightly differently than single-string variables
 var.diversity <- c("BA", "Dens", "Fcomp", "PFT", "fpc", "pft-vegc", "pft-lai", "pft-npp", "pft-diam", "pft-height", "nind", "estrate")
 
-summary(clm$var)
-summary(ncvar_get(clm, "Fcomp"))
+# summary(clm$var)
+# summary(ncvar_get(clm, "Fcomp"))
 #ncvar_get(clm, "pft")
 
 # -----------------------------------
@@ -96,7 +99,15 @@ for(i in 1:(length(soil.lpj.g)-1)){
   vol.lpj.g[i] <- abs(abs(soil.lpj.g[i]) - abs(soil.lpj.g[i+1]))
 }
 
-#soil.lpj.w <- ncvar_get(lpj.w, "soil.depths")
+
+soil.lpj.w <- ncvar_get(lpj.w, "soil.depths")
+soil.lpj.w.5 <- which(abs(soil.lpj.w)<=0.5); vol.lpj.w <- vector(length=length(soil.lpj.w))
+for(i in 1:(length(soil.lpj.w)-1)){
+  vol.lpj.w[length(soil.lpj.w)] <- abs(soil.lpj.w[length(soil.lpj.w)])
+  vol.lpj.w[i] <- abs(abs(soil.lpj.w[i]) - abs(soil.lpj.w[i+1]))
+}
+
+soil.jules.s <- ncvar_get(jules.s, "soil.depths")
 vol.jules.s <- c(0.1, 0.25, 0.65, 2)
 soil.jules.s <- vol.jules.s[1]
 for(i in 2:length(vol.jules.s)){
@@ -105,7 +116,12 @@ for(i in 2:length(vol.jules.s)){
 soil.jules.s.5 <- which(abs(soil.jules.s)<=0.5)
 
 # Closing files
-nc_close(ed); nc_close(clm); nc_close(lpj.g.m); nc_close(lpj.g.y); nc_close(lpj.w); nc_close(jules.s)
+nc_close(ed); 
+# nc_close(clm); 
+# nc_close(lpj.g.m); 
+# nc_close(lpj.g.y); 
+nc_close(lpj.w); 
+# nc_close(jules.s)
 
 # ------------------------------------------------------------------------
 # EXTRACTING MODEL OUTPUTS
@@ -116,7 +132,7 @@ nc_close(ed); nc_close(clm); nc_close(lpj.g.m); nc_close(lpj.g.y); nc_close(lpj.
 ed <- list()
 ed.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed <- file.path(model.dir, "ED2.v1.2", site.list[s])
+  dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[s])
   files.ed <- dir(dir.ed)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -164,8 +180,8 @@ for(i in 1:length(ed.var)){
 # -----------------------------------
 clm <- list() 
 for(s in 1:length(site.list)){
-#  dir.clm <- file.path(model.dir, "CLM45.v2", paste(site.list[s], "CLM45", sep="."))
-  dir.clm <- file.path(model.dir, "CLM45.v3", site.list[s])
+  dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", site.list[s])
+  # dir.clm <- file.path(model.dir, "CLM45.v3", site.list[s])
   files.clm <- dir(dir.clm)
   clm.var.list <- list()
   #-----------------------------------
@@ -212,7 +228,8 @@ for(i in 1:length(clm.var)){
 lpj.g <- list()
 lpj.pft <- c(which(lpj.g.var.y=="AGB"), which(lpj.g.var.y=="TotLivBiom"))
 for(s in 1:length(site.list)){
-  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
+  dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
+  # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
   files.lpj.g <- dir(dir.lpj.g)
   
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -273,7 +290,7 @@ for(i in 1:length(lpj.g.var)){
 lpj.w <- list()
 var.pft.lpj.w <- c("LAI", "NPP")
 for(s in 1:length(site.list)){
-  dir.lpj.w <- file.path(model.dir, "lpj-wsl.v4")
+  dir.lpj.w <- file.path(model.dir, "LPJ-WSL.v5")
   files.lpj.w <- dir(dir.lpj.w)
   lpj.w.var.list <- list()
   #-----------------------------------
@@ -315,7 +332,8 @@ for(i in 1:length(lpj.w.var)){
 pft.vars <- c("NPP", "LAI", "Qh", "Qle", "SnowDepth")
 jules.s <- list() 
 for(s in 1:length(site.list)){
-  dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[s], "JULES_STATIC", sep="_"))
+  dir.jules.s <- file.path(model.dir, "Version1_OldMet", "JULES.v1", paste(site.list[s], "JULES_STATIC", sep="_"))
+  # dir.jules.s <- file.path(model.dir, "JULES.v1", paste(site.list[s], "JULES_STATIC", sep="_"))
   files.jules.s <- dir(dir.jules.s)
   jules.s.var.list <- list()
   #-----------------------------------
@@ -440,48 +458,48 @@ summary(NEE[[1]])
 plot(NEE[[1]][,"ed2"], type="l", ylab="NEE KgC/m2/s", xlab="months since 850-01-01", main=paste(site.list[1], "NEE", sep=": "))
 #plot(NEE[[1]][,"clm45"], type="l", ylim=c(-1,1), ylab="NEE KgC/m2", xlab="months since 850-01-01", main=site.list[1])
 #lines(NEE[[1]][,"ed2"], col="green3")
-lines(NEE[[1]][,"lpj.guess"], col="lightblue", lwd=.5)
+lines(NEE[[1]][,"lpj.guess"], col="lightblue", lwd=.1)
 lines(NEE[[1]][,"lpj.wsl"], col="red", lwd=.5)
-lines(NEE[[1]][,"clm45"], col="green3", lwd=.5)
+lines(NEE[[1]][,"clm45"], col="green3", lwd=.1)
 legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "lightblue", "red", "green3"), lwd=2, bg="white")
 
 summary(NPP[[1]])
 plot(NPP[[1]][,"ed2"], type="l", ylab="NPP", xlab="months since 850-01-01", main=paste(site.list[1], "NPP", sep=": "))
-lines(NPP[[1]][,"clm45"], col="green3", lwd=0.5)
-lines(NPP[[1]][,"lpj.guess"], col="lightblue", lwd=0.5)
-lines(NPP[[1]][,"jules.stat"], col="orange3", lwd=0.5)
+lines(NPP[[1]][,"clm45"], col="green3", lwd=0.1)
+lines(NPP[[1]][,"lpj.guess"], col="lightblue", lwd=0.1)
+lines(NPP[[1]][,"jules.stat"], col="orange3", lwd=0.1)
 legend("topleft", legend=c("ED2", "LPJ-GUESS", "CLM45", "JULES_STATIC"), col=c("black", "lightblue", "green3", "orange3"), lwd=2, bg="white")
 
 summary(HeteroResp[[1]])
 plot(HeteroResp[[1]][,"ed2"], type="l", ylab="Heterotrophic Respiration", xlab="months since 850-01-01", main=paste(site.list[1], "HeteroResp", sep=": "))
-lines(HeteroResp[[1]][,"jules.stat"], col="orange3", lwd=0.5)
+lines(HeteroResp[[1]][,"jules.stat"], col="orange3", lwd=0.1)
 lines(HeteroResp[[1]][,"ed2"], col="black", lwd=0.5)
-lines(HeteroResp[[1]][,"clm45"], col="green3", lwd=0.5)
+lines(HeteroResp[[1]][,"clm45"], col="green3", lwd=0.1)
 lines(HeteroResp[[1]][,"lpj.wsl"], col="red", lwd=0.5)
-lines(HeteroResp[[1]][,"lpj.guess"], col="lightblue", lwd=0.5)
+lines(HeteroResp[[1]][,"lpj.guess"], col="lightblue", lwd=0.1)
 legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "lightblue", "red", "green3", "orange3"), lwd=2, bg="white")
 
 summary(AutoResp[[1]])
 plot(AutoResp[[1]][,"ed2"], type="l", ylab="Autotrophic Respiration", xlab="months since 850-01-01", main=paste(site.list[1], "AutoResp", sep=": "))
 lines(AutoResp[[1]][,"lpj.wsl"], col="red", lwd=0.3)
 #lines(AutoResp[[1]][,"ed2"], col="black", lwd=0.5)
-lines(AutoResp[[1]][,"lpj.guess"], col="lightblue", lwd=0.5)
-lines(AutoResp[[1]][,"clm45"], col="green3", lwd=0.4)
-lines(AutoResp[[1]][,"jules.stat"], col="orange3", lwd=0.4)
+lines(AutoResp[[1]][,"lpj.guess"], col="lightblue", lwd=0.1)
+lines(AutoResp[[1]][,"clm45"], col="green3", lwd=0.1)
+lines(AutoResp[[1]][,"jules.stat"], col="orange3", lwd=0.1)
 legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "lightblue", "red", "green3", "orange3"), lwd=2, bg="white")
 
 summary(Evap[[1]])
 plot(Evap[[1]][,"ed2"], type="l", ylab="Evap KgC/m2/s", xlab="months since 850-01-01", main=paste(site.list[1], "Evaporation", sep=": "), ylim=range(Evap[[1]]))
 lines(-Evap[[1]][,"lpj.wsl"], col="red", lwd=.5)
-lines(Evap[[1]][,"clm45"], col="green3", lwd=.5)
-lines(Evap[[1]][,"lpj.guess"], col="lightblue", lwd=.5)
+lines(Evap[[1]][,"clm45"], col="green3", lwd=.1)
+lines(Evap[[1]][,"lpj.guess"], col="lightblue", lwd=.1)
 legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "lightblue", "red", "green3"), lwd=2, bg="white")
 
 summary(Transp[[1]])
 plot(Transp[[1]][,"ed2"], type="l", ylab="Transp KgC/m2/s", xlab="months since 850-01-01", main=paste(site.list[1], "Transp", sep=": "))
-lines(Transp[[1]][,"clm45"], col="green3", lwd=.5)
+lines(Transp[[1]][,"clm45"], col="green3", lwd=.1)
 lines(Transp[[1]][,"lpj.wsl"], col="red", lwd=.5)
-lines(Transp[[1]][,"lpj.guess"], col="lightblue", lwd=.5)
+lines(Transp[[1]][,"lpj.guess"], col="lightblue", lwd=.1)
 lines(Transp[[1]][,"ed2"], col="black", lwd=.5)
 legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "lightblue", "red", "green3"), lwd=2, bg="white")
 

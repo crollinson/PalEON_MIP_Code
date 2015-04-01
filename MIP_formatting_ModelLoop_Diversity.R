@@ -22,19 +22,21 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[1])
 files.ed <- dir(dir.ed)                    
 
-dir.clm <- file.path(model.dir, "CLM45", paste(site.list[1], "CLM45", sep="."))
+dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", paste(site.list[1]))
+# dir.clm <- file.path(model.dir, "CLM45", paste(site.list[1], "CLM45", sep="."))
 files.clm <- dir(dir.clm)
 
-dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+# dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
 files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
 files.lpj.g.y <- files.lpj.g[substr(files.lpj.g, index, index+5)=="annual"]
 
-dir.lpj.w <- file.path(model.dir, "LPJ-WSL")
+dir.lpj.w <- file.path(model.dir, "LPJ-WSL.v5")
 
 # Opening an example file from each model
 ed <- nc_open(file.path(dir.ed, files.ed[1]))
@@ -101,7 +103,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------  
   # ED
   #-----------------------------------
-  dir.ed <- file.path(model.dir, "ED2", site.list[s])   
+  dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[s])   
   files.ed <- dir(dir.ed)
   #ed.var.list <- list()
   # File loop extracting time series by variable group
@@ -117,7 +119,8 @@ for(s in 1:length(site.list)){
    #-----------------------------------
   # CLM45
   #-----------------------------------
-  dir.clm <- file.path(model.dir, "CLM45", paste(site.list[s], "CLM45", sep="."))
+  dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", paste(site.list[s]))
+  # dir.clm <- file.path(model.dir, "CLM45.v3", paste(site.list[s]))
   files.clm <- dir(dir.clm)  
 #  clm.var.list <- list()
   for(i in 1:length(files.clm)){
@@ -131,7 +134,8 @@ for(s in 1:length(site.list)){
   #-----------------------------------
   # LPJ-Guess
   #-----------------------------------
-  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[s], "LPJ-GUESS", sep="_"))   
+  dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))   
+  # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[s], "LPJ-GUESS", sep="_"))   
   files.lpj.g <- dir(dir.lpj.g)
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
   #files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
@@ -149,7 +153,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------
   # LPJ-WSL
   #-----------------------------------
-  dir.lpj.w <- file.path(model.dir, "LPJ-WSL")
+  dir.lpj.w <- file.path(model.dir, "LPJ-WSL.v5")
   files.lpj.w <- dir(dir.lpj.w)
 #  lpj.w.var.list <- list()
   #-----------------------------------
@@ -197,7 +201,7 @@ lines(ed.fcomp[[1]][,c(10)], col=pft.colors.ed[4], lwd=3)
 lines(ed.fcomp[[1]][,c(11)], col=pft.colors.ed[5], lwd=3)
 legend("topleft", legend=pfts.ed, col=pft.colors.ed, bg="white", lwd=3)
 
-pdf(width=11, height=8.5, file="ED_Paleon_Prelim_Fcomp.pdf")
+pdf(width=11, height=8.5, file="PrelimGraphs/ED_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
 for(i in 1:length(site.list)){
 plot(ed.fcomp[[i]][,6], type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=2, xlab="", ylab="Fraction of AGB")
@@ -205,11 +209,11 @@ lines(ed.fcomp[[i]][,c(8)], col=pft.colors.ed[2], lwd=1.5)
 lines(ed.fcomp[[i]][,c(9)], col=pft.colors.ed[3], lwd=1.5)
 lines(ed.fcomp[[i]][,c(10)], col=pft.colors.ed[4], lwd=1.5)
 lines(ed.fcomp[[i]][,c(11)], col=pft.colors.ed[5], lwd=1.5)
-text(x=500, y=.95, site.list[i], cex=1.5, font=2)
+text(x=100, y=.8, site.list[i], cex=1.5, font=2)
 #legend("topleft", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=3)
 }
-plot(-5, type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
-legend("topleft", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=5, cex=2)
+# plot(-5, type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
+legend(x=8000, y=0.5, legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=5, cex=1)
 dev.off()
 
 #-----------------------------------  
@@ -232,9 +236,9 @@ lines(lpj.g.fcomp[[1]][,"BIBS"], col=pft.colors.lpj.g[3], lwd=3)
 lines(lpj.g.fcomp[[1]][,"TeBS"], col=pft.colors.lpj.g[4], lwd=3)
 lines(lpj.g.fcomp[[1]][,"TeIBS"], col=pft.colors.lpj.g[5], lwd=3)
 lines(lpj.g.fcomp[[1]][,"C3G"], col=pft.colors.lpj.g[6], lwd=3)
-#legend("topleft", legend=pfts.lpj.g, col=pft.colors.lpj.g, bty="n", lwd=3)
+legend(x=50, y=0.8, legend=pfts.lpj.g, col=pft.colors.lpj.g, bty="n", lwd=3)
 
-pdf(width=11, height=8.5, file="LPJ-GUESS_Paleon_Prelim_Fcomp.pdf")
+pdf(width=11, height=8.5, file="PrelimGraphs/LPJ-GUESS_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
 for(i in 1:length(site.list)){
   plot(lpj.g.fcomp[[i]][,"BNE"], type="l", ylim=c(0,1), col=pft.colors.lpj.g[1], lwd=3, ylab="Fraction of AGB")
@@ -243,11 +247,11 @@ for(i in 1:length(site.list)){
   lines(lpj.g.fcomp[[i]][,"TeBS"], col=pft.colors.lpj.g[4], lwd=3)
   lines(lpj.g.fcomp[[i]][,"TeIBS"], col=pft.colors.lpj.g[5], lwd=3)
   lines(lpj.g.fcomp[[i]][,"C3G"], col=pft.colors.lpj.g[6], lwd=3)
-  text(x=500, y=.95, site.list[i], cex=1.5, font=2)
+  text(x=100, y=.4, site.list[i], cex=1.5, font=2)
   #legend("topleft", legend=pfts.lpj.g, col=pft.colors.lpj.g, bty="n", lwd=3)
 }
-plot(-5, type="l", ylim=c(0,1), col=pft.colors.lpj.g[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
-legend("topleft", legend=pfts.lpj.g, col=pft.colors.lpj.g, bty="n", lwd=5, cex=2)
+# plot(-5, type="l", ylim=c(0,1), col=pft.colors.lpj.g[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
+legend("topleft", legend=pfts.lpj.g, col=pft.colors.lpj.g, bty="n", lwd=3, cex=1, horiz=T)
 dev.off()
 
 
@@ -272,7 +276,7 @@ lines(lpj.w.fcomp[[1]][,"BBS"], col=pft.colors.lpj.w[3], lwd=3)
 lines(lpj.w.fcomp[[1]][,"C3"], col=pft.colors.lpj.w[4], lwd=3)
 legend("topleft", legend=pfts.lpj.w, col=pft.colors.lpj.w, bty="n", lwd=3)
 
-pdf(width=11, height=8.5, file="LPJ-GUESS_Paleon_Prelim_Fcomp.pdf")
+pdf(width=11, height=8.5, file="PrelimGraphs/LPJ-GUESS_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
 for(i in 1:length(site.list)){
   plot(lpj.w.fcomp[[i]][,"BES"], type="l", ylim=c(0,1), col=pft.colors.lpj.w[1], lwd=3, ylab="Fraction of AGB")
@@ -281,9 +285,10 @@ for(i in 1:length(site.list)){
   lines(lpj.w.fcomp[[i]][,"C3"], col=pft.colors.lpj.w[4], lwd=3)
   text(x=50, y=.95, site.list[i], cex=1.5, font=2)
   #legend("topleft", legend=pfts.lpj.w, col=pft.colors.lpj.w, bty="n", lwd=3)
+  if(i==1) legend(x=0, y=0.85, legend=pfts.lpj.w, col=pft.colors.lpj.w, bty="n", lwd=3, cex=1, horiz=T)
+
 }
-plot(-5, type="l", ylim=c(0,1), col=pft.colors.lpj.w[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
-legend("topleft", legend=pfts.lpj.w, col=pft.colors.lpj.w, bty="n", lwd=5, cex=2)
+# plot(-5, type="l", ylim=c(0,1), col=pft.colors.lpj.w[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
 dev.off()
 
 
@@ -305,7 +310,7 @@ plot(clm.fcomp[[1]][,"TeNE"], type="l", ylim=c(0,1), col=pft.colors.clm[1], lwd=
 lines(clm.fcomp[[1]][,"TeBS"], col=pft.colors.clm[2], lwd=3)
 legend("topleft", legend=pfts.clm, col=pft.colors.clm, bty="n", lwd=3)
 
-#pdf(width=11, height=8.5, file="CLM45_Paleon_Prelim_Fcomp.pdf")
+pdf(width=11, height=8.5, file="PrelimGraphs/CLM45_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
 for(i in 1:length(site.list)){
   plot(clm.fcomp[[i]][,"TeNE"], type="l", ylim=c(0,1), col=pft.colors.clm[1], lwd=3, ylab="Fraction of AGB")
@@ -315,4 +320,4 @@ for(i in 1:length(site.list)){
 }
 #plot(-5, type="l", ylim=c(0,1), col=pft.colors.clm[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
 legend(x=9000, y=.90, legend=pfts.clm, col=pft.colors.clm, bty="n", lwd=5, cex=2)
-#dev.off()
+dev.off()
