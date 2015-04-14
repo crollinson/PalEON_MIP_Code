@@ -32,7 +32,7 @@ dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", site.list[1])
 # dir.clm <- file.path(model.dir, "CLM45.v3", site.list[1])
 files.clm <- dir(dir.clm)
 
-dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v3", paste(site.list[1], "LPJ-GUESS", sep="_"))
 # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -47,6 +47,10 @@ dir.jules.s <- file.path(model.dir, "Version1_OldMet", "JULES.v1", paste(site.li
 files.jules.s <- dir(dir.jules.s)
 
 
+dir.linkages <- file.path(model.dir, "LINKAGES.v1.1", paste(site.list[1], "LINKAGES", sep="_"))
+files.linkages <- dir(dir.linkages, ".nc")
+
+
 # Opening an example file from each model
 ed <- nc_open(file.path(dir.ed, files.ed[1]))
 clm <- nc_open(file.path(dir.clm, files.clm[2]))
@@ -54,6 +58,8 @@ lpj.g.m <- nc_open(file.path(dir.lpj.g, files.lpj.g.m[1]))
 lpj.g.y <- nc_open(file.path(dir.lpj.g, files.lpj.g.y[1]))
 lpj.w <- nc_open(file.path(dir.lpj.w, paste(site.list[1], "LPJ-wsl.850.nc", sep=".")))
 jules.s <- nc_open(file.path(dir.jules.s, files.jules.s[1]))
+linkages <- nc_open(file.path(dir.linkages, files.linkages[1]))
+
 
 # extracting variable names
 ed.var <- names(ed$var)
@@ -107,7 +113,7 @@ for(i in 1:(length(soil.lpj.w)-1)){
   vol.lpj.w[i] <- abs(abs(soil.lpj.w[i]) - abs(soil.lpj.w[i+1]))
 }
 
-soil.jules.s <- ncvar_get(jules.s, "soil.depths")
+# soil.jules.s <- ncvar_get(jules.s, "soil.depths")
 vol.jules.s <- c(0.1, 0.25, 0.65, 2)
 soil.jules.s <- vol.jules.s[1]
 for(i in 2:length(vol.jules.s)){
@@ -117,11 +123,11 @@ soil.jules.s.5 <- which(abs(soil.jules.s)<=0.5)
 
 # Closing files
 nc_close(ed); 
-# nc_close(clm); 
-# nc_close(lpj.g.m); 
-# nc_close(lpj.g.y); 
+nc_close(clm); 
+nc_close(lpj.g.m); 
+nc_close(lpj.g.y); 
 nc_close(lpj.w); 
-# nc_close(jules.s)
+nc_close(jules.s)
 
 # ------------------------------------------------------------------------
 # EXTRACTING MODEL OUTPUTS
@@ -228,7 +234,7 @@ for(i in 1:length(clm.var)){
 lpj.g <- list()
 lpj.pft <- c(which(lpj.g.var.y=="AGB"), which(lpj.g.var.y=="TotLivBiom"))
 for(s in 1:length(site.list)){
-  dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
+  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v3", paste(site.list[s], "LPJ-GUESS", sep="_"))
   # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))
   files.lpj.g <- dir(dir.lpj.g)
   

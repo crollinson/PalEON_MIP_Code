@@ -8,10 +8,10 @@ setwd("../")
 spatdat.dir <- "SpatialData"
 figures.dir <- "Figures"
 
-sites <- data.frame(c("PHA", "PHO", "PUN", "PBL", "PDL", "PMB"))
-names(sites) <- "Site"
-sites$Lat <- c(42.5, 45.5, 46.5, 46.5, 47.5, 43.5) 
-sites$Lon <- c(-72.5, -68.5, -89.5, -94.5, -95.5, -82.5)
+sites <- data.frame(Site=c( "PHA",  "PHO",  "PUN",  "PBL",  "PDL", "PMB" ), 
+					Lon =c(-72.18, -79.73, -89.53, -94.58, -95.17, -82.83) + 360,
+					Lat =c( 42.54,  45.25,  46.22,  46.28,  47.17,  43.61)
+					)
 summary(sites)
 coordinates(sites) <- c("Lon", "Lat")
 # plot(sites, pch=19)

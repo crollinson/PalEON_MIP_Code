@@ -309,10 +309,10 @@ for(s in 1:length(site.list)){
       clm.temp <- c(clm.temp, mean(clm[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    tair.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(tair.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    tair.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
+    names(tair.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
 
 	#-----------------------------------
 	# precipf
@@ -323,10 +323,10 @@ for(s in 1:length(site.list)){
       clm.temp <- c(clm.temp, mean(clm[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    precipf.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(precipf.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    precipf.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
+    names(precipf.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
 
 	#-----------------------------------
 	# wind
@@ -365,10 +365,10 @@ for(s in 1:length(site.list)){
       clm.temp <- c(clm.temp, mean(clm[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    swdown.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(swdown.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    swdown.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
+    names(swdown.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
 
 	#-----------------------------------
 	# qair
@@ -484,9 +484,9 @@ pdf(width=8.5, height=11, file="PrelimGraphs/GPP_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(GPP.y[[s]][,"ed2"], ylim=range(GPP.y, na.rm=T), col="black", type="l", lwd=2, ylab="GPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "GPP", sep=": "))
-	lines(GPP.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(GPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(GPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(GPP.y[[s]][,"clm45"], col="green3", lwd=0.5)
+	lines(GPP.y[[s]][,"clm45"], col="green3", lwd=1)
 	lines(GPP.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
@@ -505,7 +505,7 @@ par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(NPP.y[[s]][,"ed2"], ylim=range(NPP.y, na.rm=T), col="black", type="l", lwd=2, ylab="NPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NPP", sep=": "))
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NPP.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(NPP.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
@@ -517,9 +517,9 @@ summary(NEE.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/NEE_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(NEE.y[[s]][,"ed2"], ylim=range(NEE.y, na.rm=T), type="l", lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
+	plot(NEE.y[[s]][,"ed2"], ylim=c(-1e-7, max(NEE.y[[s]], na.rm=T)), type="l", lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NEE.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(NEE.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(site.list[s]=="PHA") {
@@ -538,7 +538,7 @@ par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AutoResp.y[[s]][,"ed2"], ylim=range(AutoResp.y, na.rm=T), type="l", lwd=2, ylab="AutoResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "AutoResp", sep=": "))
 	lines(AutoResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(AutoResp.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(AutoResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(AutoResp.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(AutoResp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n", cex=0.8)
@@ -552,7 +552,7 @@ par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(HeteroResp.y[[s]][,"ed2"], ylim=range(HeteroResp.y, na.rm=T), type="l", lwd=2, ylab="HeteroResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "HeteroResp", sep=": "))
 	lines(HeteroResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(HeteroResp.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
@@ -565,7 +565,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/AGB_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AGB.y[[s]][,"ed2"], ylim=range(AGB.y, na.rm=T), type="l", lwd=2, ylab="AGB KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "AGB", sep=": "))
-	lines(AGB.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(AGB.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(AGB.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(AGB.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(AGB.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -583,7 +583,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/TotLivBiom_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotLivBiom[[s]][,"ed2"], ylim=range(TotLivBiom, na.rm=T), type="l", lwd=2, ylab="TotLivBiom KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotLivBiom", sep=": "))
-	lines(TotLivBiom[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(TotLivBiom[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotLivBiom[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(TotLivBiom[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(TotLivBiom[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -597,7 +597,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotSoilCarb[[s]][,"ed2"], ylim=range(TotSoilCarb, na.rm=T), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
-	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(TotSoilCarb[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -613,13 +613,13 @@ for(s in 1:length(site.list)){
 	plot(LAI.y[[s]][,"ed2"], ylim=range(LAI.y, na.rm=T), col="black", type="l", lwd=2, ylab="LAI", xlab="years since 850-01-01", main=paste(site.list[s], "LAI", sep=": "))
 	lines(LAI.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(LAI.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(LAI.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(LAI.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(LAI.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
 		points(x=2000-850, y=5.225, cex=2, col="gray50", pch=19)
 		}
-	if(s==2) legend("bottomright", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bg="white", cex=0.6)
+	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n", bg="white", cex=1)
 }
 dev.off()
 
@@ -629,7 +629,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/Evap_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(Evap.y[[s]][,"ed2"], ylim=range(Evap.y, na.rm=T), type="l", lwd=2, ylab="Evap kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Evaporation", sep=": "))
-	lines(Evap.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(Evap.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Evap.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(Evap.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	# lines(Evap.y[[s]][,"jules.stat"], col="orange3", lwd=2)
@@ -644,7 +644,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/Transp_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(Transp.y[[s]][,"ed2"], ylim=range(Transp.y, na.rm=T), type="l", lwd=2, ylab="Transp kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Transpiration", sep=": "))
-	lines(Transp.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(Transp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Transp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(Transp.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	# lines(Transp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
@@ -658,7 +658,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/SoilMoist_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(SoilMoist.y[[s]][,"ed2"], ylim=range(SoilMoist.y, na.rm=T), type="l", lwd=2, ylab="SoilMoist", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Moisture", sep=": "))
-	lines(SoilMoist.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(SoilMoist.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(SoilMoist.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(SoilMoist.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(SoilMoist.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -672,7 +672,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/SoilTemp_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(SoilTemp.y[[s]][,"ed2"], ylim=range(SoilTemp.y, na.rm=T), type="l", lwd=2, ylab="SoilTemp K", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Temperature", sep=": "))
-	lines(SoilTemp.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(SoilTemp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	# lines(SoilTemp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(SoilTemp.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(SoilTemp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -686,7 +686,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/Runoff_Annual_AllSites.pdf")
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(Qs.y[[s]][,"ed2"], ylim=range(Qs.y, na.rm=T), type="l", lwd=2, ylab="Runoff kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Runoff", sep=": "))
-	lines(Qs.y[[s]][,"lpj.guess"], col="blue", lwd=0.5)
+	lines(Qs.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Qs.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(Qs.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(Qs.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
@@ -711,23 +711,35 @@ summary(Fcomp.y[[1]])
 summary(tair.y[[1]])
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(tair.y[[s]][,"ed2"], ylim=range(tair.y, na.rm=T), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Air Temp", sep=": "))
-#	lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	plot(tair.y[[s]][,"ed2"], ylim=c(270, max(tair.y[[s]], na.rm=T)), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Air Temp", sep=": "))
+	lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 #	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(tair.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(tair.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==1) legend("topleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
 }
 
 summary(precipf.y[[1]])
 par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y, na.rm=T), type="l", lwd=2, ylab="Precip Rate", xlab="years since 850-01-01", main=paste(site.list[s], "Precip Rate", sep=": "))
-#	lines(precipf.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(precipf.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 #	lines(precipf.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(precipf.y[[s]][,"clm45"], col="green3", lwd=0.5)
 	lines(precipf.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
 	if(s==5) legend("topleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
+}
+
+
+summary(swdown.y[[1]])
+par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
+	lines(swdown.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+#	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(swdown.y[[s]][,"clm45"], col="green3", lwd=0.5)
+	lines(swdown.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
 }
 
 #------------------------------------------
