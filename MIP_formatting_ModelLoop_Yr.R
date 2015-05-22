@@ -4,6 +4,13 @@
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 
+# ###############################################
+# ###############################################
+# Note: there are a couple wonky places with ED that need to be removed to not throw thigns way, way off
+# ###############################################
+# ###############################################
+sec2yr <- 1*60*60*24*365
+
 # ---------------------------------------------- #
 # Variables that exist for all models, but need to be aggregated to year for comparision with LPJ
 
@@ -30,45 +37,69 @@ for(s in 1:length(site.list)){
 	# Fcomp (check)
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  jules.temp <- c(jules.temp, NA)
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
+	  linkages.temp <- c(linkages.temp, NA)
       # jules.temp <- c(jules.temp, mean(jules.s[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Fcomp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    Fcomp.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["Fcomp"]][,s], lpj.g[["Fcomp"]][,s]))  
-    names(Fcomp.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess")
+    Fcomp.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["Fcomp"]][,s], lpj.g[["Fcomp"]][,s]), jules.temp, linkages.temp)  
+    names(Fcomp.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 
     #-----------------------------------
 	# Density (total)
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # clm.temp <- c(clm.temp, mean(clm[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
+
+	  clm.bgc.temp <- c(clm.bgc.temp, NA)
+	  clm.cn.temp <- c(clm.cn.temp, NA)
+	  jules.temp <- c(jules.temp, NA)
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
+	  linkages.temp <- c(linkages.temp, NA)
+      # clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # jules.temp <- c(jules.temp, mean(jules.s[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Dens"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    Dens.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["Dens"]][,s], lpj.g[["Dens"]][,s]))  
-    names(Dens.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
+    Dens.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["Dens"]][,s], lpj.g[["Dens"]][,s]), jules.temp, linkages.temp)  
+    names(Dens.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
 
     #-----------------------------------
 	# Basal Area (total)
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # clm.temp <- c(clm.temp, mean(clm[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
+
+	  clm.bgc.temp <- c(clm.bgc.temp, NA)
+	  clm.cn.temp <- c(clm.cn.temp, NA)
+	  jules.temp <- c(jules.temp, NA)
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
+	  linkages.temp <- c(linkages.temp, NA)
+      # clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # jules.temp <- c(jules.temp, mean(jules.s[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["BA"]][yr.rows[i]:(yr.rows[i]+11),s]))
       }
-    BA.y[[s]] <- data.frame(cbind(ed.temp, lpj.w[["BA"]][,s], lpj.g[["BA"]][,s]))  
-    names(BA.y[[s]]) <- c("ed2", "lpj.wsl", "lpj.guess")
+    BA.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["BA"]][,s], lpj.g[["BA"]][,s]), jules.temp, linkages.temp)  
+    names(BA.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 	#---------------------------------------------------------------------
 	# CARBON FLUXES
 	#---------------------------------------------------------------------
@@ -77,71 +108,92 @@ for(s in 1:length(site.list)){
 	# GPP
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["GPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)
       }
-    GPP.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(GPP.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")
+    GPP.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(GPP.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
     #-----------------------------------
 	# NPP
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)
       }
-    NPP.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["NPP"]][,s], lpj.g.temp, jules.temp))  
-    names(NPP.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")
+    NPP.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["NPP"]][,s], lpj.g.temp, jules.temp, linkages$NPP[,site.list[s]]))  
+    names(NPP.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
     #-----------------------------------
 	# NEE
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["NPP"]][yr.rows[i]:(yr.rows[i]+11),s])-mean(jules.s[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]*0.237))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["NEE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)      
       }
-    NEE.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(NEE.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")
+    NEE.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages$NEE[,site.list[s]]))  
+    names(NEE.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
     #-----------------------------------
 	# AutoResp
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["AutoResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)
       }
-    AutoResp.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(AutoResp.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    AutoResp.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(AutoResp.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
     #-----------------------------------
 	# HeteroResp
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]*0.237))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["HeteroResp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      }
-    HeteroResp.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(HeteroResp.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+	  linkages.temp <- c(linkages.temp, NA)      
+	  }
+    HeteroResp.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages$HeteroResp[,site.list[s]]))  
+    names(HeteroResp.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
 	#---------------------------------------------------------------------
 	# CARBON POOLS
@@ -151,45 +203,65 @@ for(s in 1:length(site.list)){
 	# AGB
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
+
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)      
       }
-    AGB.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["TotLivBiom"]][,s], lpj.g[["AGB"]][,s], jules.temp))  
-    names(AGB.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    AGB.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["TotLivBiom"]][,s], lpj.g[["AGB"]][,s], jules.temp, linkages$AGB[,site.list[s]]))  
+    names(AGB.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
 	#-----------------------------------
 	# TotLivBiom
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
+
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)      
       }
-    TotLivBiom[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["TotLivBiom"]][,s], lpj.g[["TotLivBiom"]][,s], jules.temp))  
-    names(TotLivBiom[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    TotLivBiom[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["TotLivBiom"]][,s], lpj.g[["TotLivBiom"]][,s], jules.temp, linkages$TotLivBiomass[,site.list[s]]))  
+    names(TotLivBiom[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
 	#-----------------------------------
 	# TotSoilCarb
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["TotSoilCarb"]][yr.rows[i]:(yr.rows[i]+11),s]))
+
+	  lpj.w.temp <- c(lpj.w.temp, NA)
+	  lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["TotLivBiom"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["AGB"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      }
+	  linkages.temp <- c(linkages.temp, NA)      
+	  }
 
 	# Extracting Soil from LPJ.G
 	lpj.g.soilC <- vector()
-    dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+    dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[1], "LPJ-GUESS", sep="_"))
     # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
 	files.lpj.g <- dir(dir.lpj.g)
   
@@ -202,8 +274,9 @@ for(s in 1:length(site.list)){
       	}    
     nc_close(ncMT)
 
-    TotSoilCarb[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["TotSoilCarb"]][,s], lpj.g.soilC, jules.temp))  
-    names(TotSoilCarb[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    TotSoilCarb[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["TotSoilCarb"]][,s], lpj.g.soilC, jules.temp, linkages$TotSoilCarb[,site.list[s]]))  
+    names(TotSoilCarb[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
 
 	#---------------------------------------------------------------------
 	# OTHER
@@ -213,87 +286,109 @@ for(s in 1:length(site.list)){
 	# LAI
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["LAI"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)      
       }
-    LAI.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w[["LAI"]][,s], lpj.g.temp, jules.temp))  
-    names(LAI.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    LAI.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w[["LAI"]][,s], lpj.g.temp, jules.temp, linkages.temp))  
+    names(LAI.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
+
         
 	#-----------------------------------
 	# Evap
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      # jules.temp <- c(jules.temp, mean(jules.s[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      jules.temp <- c(jules.temp, mean(jules.s[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Evap"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)      
       }
-    Evap.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp))  
-    names(Evap.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess")    
+    Evap.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages$Evap[,site.list[s]]))  
+    names(Evap.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
         
 	#-----------------------------------
 	# Transp
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["Transp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["Tranp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Transp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["Tranp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["Tranp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  jules.temp <- c(jules.temp, "NA")
       # jules.temp <- c(jules.temp, mean(jules.s[["Transp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Tranp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Transp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      }
-    Transp.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp))  
-    names(Transp.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess")    
+	  linkages.temp <- c(linkages.temp, NA)            
+	  }
+    Transp.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(Transp.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# SoilMoist
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["SoilMoist"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    SoilMoist.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(SoilMoist.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")    
+    SoilMoist.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(SoilMoist.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 
 	#-----------------------------------
 	# SoilTemp
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["SoilTemp"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    SoilTemp.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.g.temp, jules.temp))  
-    names(SoilTemp.y[[s]]) <- c("ed2", "clm45", "lpj.guess", "jules.stat")    
+    SoilTemp.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(SoilTemp.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 
 	#-----------------------------------
 	# Qs
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["Qs"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    Qs.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, lpj.w.temp, lpj.g.temp, jules.temp))  
-    names(Qs.y[[s]]) <- c("ed2", "clm45", "lpj.wsl", "lpj.guess", "jules.stat")        	
+    Qs.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(Qs.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 
 	#---------------------------------------------------------------------
@@ -304,99 +399,131 @@ for(s in 1:length(site.list)){
 	# tair
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["tair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    tair.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
-    names(tair.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
+    tair.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(tair.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# precipf
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["precipf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    precipf.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
-    names(precipf.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
+    precipf.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(precipf.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")	
 
 	#-----------------------------------
 	# wind
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
+      lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["wind"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    wind.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(wind.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    wind.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(wind.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# lwdown
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
+      lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["lwdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    lwdown.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(lwdown.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    lwdown.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(lwdown.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# swdown
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
       lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["swdown"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    swdown.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp, lpj.g.temp))  
-    names(swdown.y[[s]]) <- c("ed2", "clm45", "jules.stat", "lpj.guess")        	
+    swdown.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(swdown.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# qair
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
+      lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["qair"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    qair.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(qair.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    qair.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(qair.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 	#-----------------------------------
 	# psurf
     #-----------------------------------
     for(i in 1:length(yr.rows)){
-     if(i==1) ed.temp <- clm.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- vector()
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- vector()
       ed.temp <- c(ed.temp, mean(ed[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
-      clm.temp <- c(clm.temp, mean(clm[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       jules.temp <- c(jules.temp, mean(jules.s[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      lpj.w.temp <- c(lpj.w.temp, NA)
+      lpj.g.temp <- c(lpj.g.temp, NA)
       # lpj.w.temp <- c(lpj.w.temp, mean(lpj.w[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
       # lpj.g.temp <- c(lpj.g.temp, mean(lpj.g[["psurf"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  linkages.temp <- c(linkages.temp, NA)            
       }
-    psurf.y[[s]] <- data.frame(cbind(ed.temp, clm.temp, jules.temp))  
-    names(psurf.y[[s]]) <- c("ed2", "clm45", "jules.stat")        	
+    psurf.y[[s]] <- data.frame(cbind(ed.temp, ed.lu.temp, clm.bgc.temp, clm.cn.temp, lpj.w.temp, lpj.g.temp, jules.temp, linkages.temp))  
+    names(psurf.y[[s]]) <- c("ed2", "ed2.lu", "clm.bgc", "clm.cn", "lpj.wsl", "lpj.guess", "jules.stat", "linkages")
 
 
 }
@@ -411,35 +538,57 @@ names(AGB.y) <- names(TotLivBiom) <- names(TotSoilCarb) <- names(LAI.y) <- names
 # Storing key variables as .nc files
 dim.years <- ncdim_def(name="Year", units="Years", vals=1850:(1850+nrow(GPP.y[[1]])-1))
 dim.allmods <- ncdim_def(name="Models", units="", vals=1:ncol(GPP.y[[1]]))
-dim.3mods <- ncdim_def(name="Models", units="", vals=1:3)
+# dim.3mods <- ncdim_def(name="Models", units="", vals=1:3)
+# dim.4mods <- ncdim_def(name="Models", units="", vals=1:4)
 
 dim.string <- ncdim_def("names", "", 1:24, create_dimvar=FALSE)
 dim.allmods2 <- ncdim_def(name="Model Names", units="", vals=1:ncol(GPP.y[[1]]), create_dimvar=FALSE)
-dim.3mods2 <- ncdim_def(name="Model Names", units="", vals=1:3, create_dimvar=FALSE)
+# dim.3mods2 <- ncdim_def(name="Model Names", units="", vals=1:3, create_dimvar=FALSE)
+# dim.4mods2 <- ncdim_def(name="Model Names", units="", vals=1:4, create_dimvar=FALSE)
 
 units.fluxes <- "kg m-2 s-1"
+units.pools <- "kgC m-2 s-1"
+units.lai <- "m2 m-2"
+units.temp <- "K"
+units.soil.moist <- "kg m-2"
 models.all <- names(GPP.y[[1]])
-models.3 <- names(tair.y[[1]])
+# models.4 <- names(tair.y[[1]])
 
-GPP.vars <- AGB.vars <- LAI.vars <- NEE.vars <- NPP.vars <- Temp.vars <- Precip.vars <- list()
+GPP.vars <- AGB.vars <- LAI.vars <-  NEE.vars <- NPP.vars <- Temp.vars <- Precip.vars <- AutoResp.vars <- HeteroResp.vars <- TotSoilCarb.vars <- Evap.vars <- Transp.vars <- SoilMoist.vars <- list()
 for(i in 1:length(site.list)){
 	GPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	AGB.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	AGB.vars[[i]] <- ncvar_def(site.list[i], units= units.pools, dim=list(dim.allmods, dim.years))
+	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.lai, dim=list(dim.allmods, dim.years))
 	NEE.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	NPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	Temp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.3mods, dim.years))
-	Precip.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.3mods, dim.years))
+	Temp.vars[[i]] <- ncvar_def(site.list[i], units=units.temp, dim=list(dim.allmods, dim.years))
+	Precip.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+
+	AutoResp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	HeteroResp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	TotSoilCarb.vars[[i]] <- ncvar_def(site.list[i], units=units.pools, dim=list(dim.allmods, dim.years))
+	Evap.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	Transp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	SoilMoist.vars[[i]] <- ncvar_def(site.list[i], units=units.soil.moist, dim=list(dim.allmods, dim.years))
+
 }	
 GPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 AGB.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 LAI.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NEE.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
-Temp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.3mods2), prec="char")
-Precip.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.3mods2), prec="char")
+Temp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+Precip.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
-names(GPP.vars) <- names(AGB.vars) <- names(Temp.vars) <- names(Precip.vars) <- c(site.list, "ModelNames")
+AutoResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+HeteroResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+TotSoilCarb.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+Evap.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+Transp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+SoilMoist.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+
+
+names(GPP.vars) <- names(AGB.vars) <- names(Temp.vars) <- names(Precip.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- c(site.list, "ModelNames")
 summary(GPP.vars)
 
 output.location <- "phase1a_output_variables"
@@ -450,6 +599,12 @@ npp <- nc_create(file.path(output.location, "NPP.annual.nc"), NPP.vars)
 nee <- nc_create(file.path(output.location, "NEE.annual.nc"), NEE.vars)
 temp <- nc_create(file.path(output.location, "Temp.annual.nc"), Temp.vars)
 precip <- nc_create(file.path(output.location, "Precip.annual.nc"), Precip.vars)
+auto.resp <- nc_create(file.path(output.location, "RespirationAuto.annual.nc"), AutoResp.vars)
+hetero.resp <- nc_create(file.path(output.location, "RespirationHetero.annual.nc"), HeteroResp.vars)
+soilcarb <- nc_create(file.path(output.location, "TotSoilCarb.annual.nc"), TotSoilCarb.vars)
+evap <- nc_create(file.path(output.location, "Evap.annual.nc"), Evap.vars)
+transp <- nc_create(file.path(output.location, "Transp.annual.nc"), Transp.vars)
+soilmoist <- nc_create(file.path(output.location, "SoilMoist.annual.nc"), SoilMoist.vars)
 
 for(i in 1:length(site.list)){
 	ncvar_put(gpp, GPP.vars[[i]], t(GPP.y[[i]]))
@@ -459,16 +614,30 @@ for(i in 1:length(site.list)){
 	ncvar_put(nee, NEE.vars[[i]], t(NEE.y[[i]]))
 	ncvar_put(temp, Temp.vars[[i]], t(tair.y[[i]]))
 	ncvar_put(precip, Precip.vars[[i]], t(precipf.y[[i]]))
+
+	ncvar_put(auto.resp, AutoResp.vars[[i]], t(AutoResp.y[[i]]))
+	ncvar_put(hetero.resp, HeteroResp.vars[[i]], t(HeteroResp.y[[i]]))
+	ncvar_put(soilcarb, TotSoilCarb.vars[[i]], t(TotSoilCarb[[i]]))
+	ncvar_put(evap, Evap.vars[[i]], t(Evap.y[[i]]))
+	ncvar_put(transp, Transp.vars[[i]], t(Transp.y[[i]]))
+	ncvar_put(soilmoist, SoilMoist.vars[[i]], t(SoilMoist.y[[i]]))
 }
 ncvar_put(gpp, GPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(agb, AGB.vars[[length(site.list)+1]], models.all)
 ncvar_put(lai, LAI.vars[[length(site.list)+1]], models.all)
 ncvar_put(npp, NPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(nee, NEE.vars[[length(site.list)+1]], models.all)
-ncvar_put(temp, Temp.vars[[length(site.list)+1]], models.3)
-ncvar_put(precip, Precip.vars[[length(site.list)+1]], models.3)
+ncvar_put(temp, Temp.vars[[length(site.list)+1]], models.all)
+ncvar_put(precip, Precip.vars[[length(site.list)+1]], models.all)
 
-nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip) 
+ncvar_put(auto.resp, AutoResp.vars[[length(site.list)+1]], models.all)
+ncvar_put(hetero.resp, HeteroResp.vars[[length(site.list)+1]], models.all)
+ncvar_put(soilcarb, TotSoilCarb.vars[[length(site.list)+1]], models.all)
+ncvar_put(evap, Evap.vars[[length(site.list)+1]], models.all)
+ncvar_put(transp, Transp.vars[[length(site.list)+1]], models.all)
+ncvar_put(soilmoist, SoilMoist.vars[[length(site.list)+1]], models.all)
+
+nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist)
 
 # nc <- nc_open(file.path(file.path(output.location, "GPP.annual.nc")))
 # summary(nc$var)
@@ -481,19 +650,20 @@ nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip)
 # GPP
 summary(GPP.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/GPP_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(GPP.y[[s]][,"ed2"], ylim=range(GPP.y, na.rm=T), col="black", type="l", lwd=2, ylab="GPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "GPP", sep=": "))
-	lines(GPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(GPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(GPP.y[[s]][,"clm45"], col="green3", lwd=1)
-	lines(GPP.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
+	plot(GPP.y[[s]][,"ed2"]*sec2yr, ylim=range(GPP.y, na.rm=T)*sec2yr, col="black", type="l", lwd=2, ylab="GPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "GPP", sep=": "))
+	lines(GPP.y[[s]][,"jules.stat"]*sec2yr, col="orange3", lwd=2)
+	lines(GPP.y[[s]][,"lpj.guess"]*sec2yr, col="blue", lwd=2)
+	lines(GPP.y[[s]][,"lpj.wsl"]*sec2yr, col="red", lwd=2)
+	lines(GPP.y[[s]][,"clm.bgc"]*sec2yr, col="green3", lwd=1)
+	lines(GPP.y[[s]][,"clm.cn"]*sec2yr, col="darkolivegreen", lwd=2)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
-		points(x=2000-850, y=14*1e3*yr2sec*1e-4, cex=1.5, col="gray50", pch=19)
+		points(x=2000-850, y=14*1e3*1e-4, cex=1.5, col="gray50", pch=19)
 		# arrows(x0=2000-850, y0=(14-1.641137817)*1e-6*yr2sec*1e4, x1=2000-850, y1=(14+1.641137817)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
 		}
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
@@ -501,196 +671,280 @@ dev.off()
 # NPP
 summary(NPP.y[[1]]) 
 pdf(width=8.5, height=11, file="PrelimGraphs/NPP_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(NPP.y[[s]][,"ed2"], ylim=range(NPP.y, na.rm=T), col="black", type="l", lwd=2, ylab="NPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NPP", sep=": "))
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NPP.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(NPP.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NPP.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(NPP.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(NPP.y[[s]][,"linkages"], col="purple2", lwd=3)
+	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
+}
+dev.off()
+
+
+pdf(width=8.5, height=11, file="PrelimGraphs/NPP_Annual_AllSites_Truncated.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(NPP.y[[s]][,"ed2"], ylim=c(0, 8e-8), col="black", type="l", lwd=2, ylab="NPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NPP", sep=": "))
+	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NPP.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(NPP.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(NPP.y[[s]][,"linkages"], col="purple2", lwd=3)
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # NEE
 summary(NEE.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/NEE_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(NEE.y[[s]][,"ed2"], ylim=c(-1e-7, max(NEE.y[[s]], na.rm=T)), type="l", lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
+	plot(-NEE.y[[s]][,"ed2"], type="l", ylim=range(NEE.y, na.rm=T), lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NEE.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(NEE.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
+	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NEE.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(NEE.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(NEE.y[[s]][,"linkages"], col="purple2", lwd=2)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
 		points(x=2000-850, y=2.453846154*1e3*yr2sec*1e-4, cex=2, col="gray70", pch=19)
 		# arrows(x0=2000-850, y0=(2.064461538)*1e-6*yr2sec*1e4, x1=2000-850, y1=(2.725384615)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
 		}
-	if(s==5) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	if(s==5) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
+}
+dev.off()
+
+pdf(width=8.5, height=11, file="PrelimGraphs/NEE_Annual_AllSites_Truncated.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(-NEE.y[[s]][,"ed2"], type="l", ylim=c(-4e-8, 5e-8), lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
+	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NEE.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(NEE.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(NEE.y[[s]][,"linkages"], col="purple2", lwd=2)
+	if(site.list[s]=="PHA") {
+		# From Urbanski et al 2007
+		points(x=2000-850, y=2.453846154*1e3*yr2sec*1e-4, cex=2, col="gray70", pch=19)
+		# arrows(x0=2000-850, y0=(2.064461538)*1e-6*yr2sec*1e4, x1=2000-850, y1=(2.725384615)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
+		}
+	if(s==5) legend("bottomright", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # AutoResp
 summary(AutoResp.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/AutoResp_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AutoResp.y[[s]][,"ed2"], ylim=range(AutoResp.y, na.rm=T), type="l", lwd=2, ylab="AutoResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "AutoResp", sep=": "))
 	lines(AutoResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(AutoResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(AutoResp.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(AutoResp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n", cex=0.8)
+	lines(AutoResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	# lines(AutoResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(AutoResp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(AutoResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n", cex=1.2, ncol=2)
 }
 dev.off()
 
 # HeteroResp
 summary(HeteroResp.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/HeteroResp_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(HeteroResp.y[[s]][,"ed2"], ylim=range(HeteroResp.y, na.rm=T), type="l", lwd=2, ylab="HeteroResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "HeteroResp", sep=": "))
 	lines(HeteroResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(HeteroResp.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(HeteroResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(HeteroResp.y[[s]][,"linkages"], col="purple2", lwd=3)
+	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
+}
+dev.off()
+
+pdf(width=8.5, height=11, file="PrelimGraphs/HeteroResp_Annual_AllSites_Truncated.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(HeteroResp.y[[s]][,"ed2"], ylim=c(0, 8e-8), type="l", lwd=2, ylab="HeteroResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "HeteroResp", sep=": "))
+	lines(HeteroResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(HeteroResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(HeteroResp.y[[s]][,"linkages"], col="purple2", lwd=3)
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="o", bg="white", ncol=2)
 }
 dev.off()
 
 # AGB
 summary(AGB.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/AGB_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AGB.y[[s]][,"ed2"], ylim=range(AGB.y, na.rm=T), type="l", lwd=2, ylab="AGB KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "AGB", sep=": "))
 	lines(AGB.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(AGB.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(AGB.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(AGB.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
+	lines(AGB.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(AGB.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(AGB.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(AGB.y[[s]][,"linkages"], col="purple2", lwd=3)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
 		points(x=2000-850, y=107.7942857*1e3*1e-4, cex=2, col="gray70", pch=19)
 		}
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # TotLivBiom
 summary(TotLivBiom[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/TotLivBiom_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotLivBiom[[s]][,"ed2"], ylim=range(TotLivBiom, na.rm=T), type="l", lwd=2, ylab="TotLivBiom KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotLivBiom", sep=": "))
 	lines(TotLivBiom[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotLivBiom[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(TotLivBiom[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(TotLivBiom[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(TotLivBiom[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotLivBiom[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(TotLivBiom[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(TotLivBiom[[s]][,"linkages"], col="purple2", lwd=2)
+	if(s==1) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # TotSoilCarb
 summary(TotSoilCarb[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotSoilCarb[[s]][,"ed2"], ylim=range(TotSoilCarb, na.rm=T), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
 	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(TotSoilCarb[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotSoilCarb[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(TotSoilCarb[[s]][,"linkages"], col="purple2", lwd=2)
+	if(s==2) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
+}
+dev.off()
+
+pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites_Truncated.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(TotSoilCarb[[s]][,"ed2"], ylim=c(0,150), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
+	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotSoilCarb[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(TotSoilCarb[[s]][,"linkages"], col="purple2", lwd=2)
+	if(s==2) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # LAI
 summary(LAI.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/LAI_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(LAI.y[[s]][,"ed2"], ylim=range(LAI.y, na.rm=T), col="black", type="l", lwd=2, ylab="LAI", xlab="years since 850-01-01", main=paste(site.list[s], "LAI", sep=": "))
 	lines(LAI.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(LAI.y[[s]][,"clm45"], col="green3", lwd=0.5)
+	lines(LAI.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(LAI.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(LAI.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(LAI.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
+	lines(LAI.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	lines(LAI.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	if(site.list[s]=="PHA") {
 		# From Urbanski et al 2007
 		points(x=2000-850, y=5.225, cex=2, col="gray50", pch=19)
 		}
-	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n", bg="white", cex=1)
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n", bg="white", cex=1.25, ncol=2)
 }
 dev.off()
 
 # Evap
 summary(Evap.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/Evap_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
+#	plot(Evap.y[[s]][,"ed2"], ylim=range(Evap.y, na.rm=T), type="l", lwd=2, ylab="Evap kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Evaporation", sep=": "))
 	plot(Evap.y[[s]][,"ed2"], ylim=range(Evap.y, na.rm=T), type="l", lwd=2, ylab="Evap kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Evaporation", sep=": "))
 	lines(Evap.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Evap.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(Evap.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	# lines(Evap.y[[s]][,"jules.stat"], col="orange3", lwd=2)
-	if(s==1) legend(x=5, y=3e-5, legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "blue", "red", "green3"), lwd=2, bty="n")
+	lines(Evap.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(Evap.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(Evap.y[[s]][,"linkages"], col="purple2", lwd=2)
+	lines(Evap.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==5) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES", "LINKAGES"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3", "purple2"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 
 # Transp
-summary(Transp.y[[1]])
-pdf(width=8.5, height=11, file="PrelimGraphs/Transp_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(Transp.y[[s]][,"ed2"], ylim=range(Transp.y, na.rm=T), type="l", lwd=2, ylab="Transp kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Transpiration", sep=": "))
-	lines(Transp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(Transp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(Transp.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	# lines(Transp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "blue", "red", "green3"), lwd=2, bty="n")
-}
-dev.off()
+# summary(Transp.y[[2]])
+# pdf(width=8.5, height=11, file="PrelimGraphs/Transp_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(Transp.y[[s]][,"ed2"], ylim=range(Transp.y, na.rm=T), type="l", lwd=2, ylab="Transp kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Transpiration", sep=": "))
+	# lines(Transp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	# lines(Transp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	# lines(Transp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	# # lines(Transp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	# if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45"), col=c("black", "blue", "red", "green3"), lwd=2, bty="n")
+# }
+# dev.off()
 
 # SoilMoist
 summary(SoilMoist.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/SoilMoist_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(SoilMoist.y[[s]][,"ed2"], ylim=range(SoilMoist.y, na.rm=T), type="l", lwd=2, ylab="SoilMoist", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Moisture", sep=": "))
 	lines(SoilMoist.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(SoilMoist.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(SoilMoist.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(SoilMoist.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==1) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(SoilMoist.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(SoilMoist.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(SoilMoist.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==1) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
 # SoilTemp
 summary(SoilTemp.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/SoilTemp_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(SoilTemp.y[[s]][,"ed2"], ylim=range(SoilTemp.y, na.rm=T), type="l", lwd=2, ylab="SoilTemp K", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Temperature", sep=": "))
+	plot(SoilTemp.y[[s]][,"ed2"], ylim=c(270, 285), type="l", lwd=2, ylab="SoilTemp K", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Temperature", sep=": "))
 	lines(SoilTemp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	# lines(SoilTemp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(SoilTemp.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(SoilTemp.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==1) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "CLM45", "JULES_STATIC"), col=c("black", "blue", "green3", "orange3"), lwd=2, bty="n")
+	lines(SoilTemp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(SoilTemp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(SoilTemp.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==1) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n")
 }
 dev.off()
 
 # Qs
 summary(Qs.y[[1]])
 pdf(width=8.5, height=11, file="PrelimGraphs/Runoff_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(Qs.y[[s]][,"ed2"], ylim=range(Qs.y, na.rm=T), type="l", lwd=2, ylab="Runoff kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Runoff", sep=": "))
 	lines(Qs.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Qs.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(Qs.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(Qs.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM45", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "orange3"), lwd=2, bty="n")
+	lines(Qs.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(Qs.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(Qs.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
@@ -709,109 +963,133 @@ summary(Fcomp.y[[1]])
 
 #pdf(width=8.5, height=11, file="PrelimGraphs/Tair_Annual_AllSites.pdf")
 summary(tair.y[[1]])
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+pdf("PrelimGraphs/MetDrivers_Tair_Annual_AllSites.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(tair.y[[s]][,"ed2"], ylim=c(270, max(tair.y[[s]], na.rm=T)), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Air Temp", sep=": "))
-	lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
 #	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(tair.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(tair.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==1) legend("bottomleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
+	lines(tair.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(tair.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(tair.y[[s]][,"jules.stat"], col="orange3", lwd=1.5)
+	# lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=1)
+	# lines(tair.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=1)
+	lines(tair.y[[s]][,"ed2"], col="black", lwd=1)
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES_STATIC"), col=c("black", "green3", "blue", "darkolivegreen", "orange3"), lwd=2, bty="n", ncol=2)
 }
+dev.off()
 
 summary(precipf.y[[1]])
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+pdf("PrelimGraphs/MetDrivers_precipf_Annual_AllSites.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y, na.rm=T), type="l", lwd=2, ylab="Precip Rate", xlab="years since 850-01-01", main=paste(site.list[s], "Precip Rate", sep=": "))
-	lines(precipf.y[[s]][,"lpj.guess"], col="blue", lwd=2)
+	lines(precipf.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
 #	lines(precipf.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(precipf.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(precipf.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==5) legend("topleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
+	lines(precipf.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(precipf.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(precipf.y[[s]][,"jules.stat"], col="orange3", lwd=1)
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES_STATIC"), col=c("black", "green3", "darkolivegreen", "blue", "orange3"), lwd=2, bty="n", ncol=2)
 }
-
+dev.off()
 
 summary(swdown.y[[1]])
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+pdf("PrelimGraphs/MetDrivers_swdown_Annual_AllSites.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
+	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="swdown (W/m2/s)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
 	lines(swdown.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 #	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(swdown.y[[s]][,"clm45"], col="green3", lwd=0.5)
-	lines(swdown.y[[s]][,"jules.stat"], col="orange3", lwd=0.5)
-	if(s==1) legend("bottomleft", legend=c("ED2", "CLM45", "JULES_STATIC"), col=c("black", "green3", "orange3"), lwd=2, bty="n")
+	lines(swdown.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(swdown.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(swdown.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES_STATIC"), col=c("black", "green3", "darkolivegreen", "blue", "orange3"), lwd=2, bty="n")
 }
+dev.off()
+
+pdf("PrelimGraphs/MetDrivers_lwdown_Annual_AllSites.pdf")
+par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+for(s in 1:length(site.list)){
+	plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="swdown (W/m2/s)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
+	lines(lwdown.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
+#	lines(lwdown.y[[s]][,"lpj.wsl"], col="red", lwd=2)
+	lines(lwdown.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(lwdown.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(lwdown.y[[s]][,"jules.stat"], col="orange3", lwd=2)
+	if(s==1) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "JULES_STATIC"), col=c("black", "green3", "darkolivegreen", "orange3"), lwd=2, bty="n")
+}
+dev.off()
 
 #------------------------------------------
-# tair
-pdf("PrelimGraphs/MetDrivers_Tair_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(tair.y[[s]][,"ed2"], ylim=range(tair.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Air Temp", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
-
-# precipf
-pdf("PrelimGraphs/MetDrivers_precipf_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Precip", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
-
-# psurf
-pdf("PrelimGraphs/MetDrivers_psurf_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(psurf.y[[s]][,"ed2"], ylim=range(psurf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Psurf", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
-
-# qair
-pdf("PrelimGraphs/MetDrivers_qair_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(qair.y[[s]][,"ed2"], ylim=range(qair.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Qair", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
-
-# wind
-pdf("PrelimGraphs/MetDrivers_wind_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(wind.y[[s]][,"ed2"], ylim=range(wind.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Wind", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
-
-# co2
-co2.ann.dir <- "~/Dropbox/PalEON CR/phase1a_env_drivers/phase1a_env_drivers_v3/paleon_co2/paleon_annual_co2.nc"
-co2.ann.nc <- nc_open(co2.ann.dir)
-co2.ann <- ncvar_get(co2.ann.nc, "co2")
-nc_close(co2.ann.nc)
-summary(co2.ann)
-pdf("PrelimGraphs/MetDrivers_co2_Annual_AllSites.pdf")
- par(new=F, mfrow=c(1,1))
- plot(co2.ann, type="l", lwd=2, main="CO2", xlab="years since 850-01-01")
-dev.off()
-# pdf("PrelimGraphs/MetDrivers_co2_Annual_AllSites.pdf")
-# par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
+# # tair
+# pdf("PrelimGraphs/MetDrivers_Tair_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 # for(s in 1:length(site.list)){
-	# plot(co2.y[[s]][,"ed2"], ylim=range(co2.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="CO2", xlab="years since 850-01-01", main=paste(site.list[s]))
+	# plot(tair.y[[s]][,"ed2"], ylim=c(270, 283), type="l", lwd=1, ylab="Air Temp", xlab="years since 850-01-01", main=paste(site.list[s]))
 # }
 # dev.off()
 
-# lwdown
-pdf("PrelimGraphs/MetDrivers_lwdown_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="lwdown", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
+# # precipf
+# pdf("PrelimGraphs/MetDrivers_precipf_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Precip", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
 
-# swdown
-pdf("PrelimGraphs/MetDrivers_swdown_Annual_AllSites.pdf")
-par(mfrow=c(3,2), mar=c(4,5,4,1)+0.1)
-for(s in 1:length(site.list)){
-	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="swdown", xlab="years since 850-01-01", main=paste(site.list[s]))
-}
-dev.off()
+# # psurf
+# pdf("PrelimGraphs/MetDrivers_psurf_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(psurf.y[[s]][,"ed2"], ylim=range(psurf.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Psurf", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
+
+# # qair
+# pdf("PrelimGraphs/MetDrivers_qair_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(qair.y[[s]][,"ed2"], ylim=range(qair.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Qair", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
+
+# # wind
+# pdf("PrelimGraphs/MetDrivers_wind_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(wind.y[[s]][,"ed2"], ylim=range(wind.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="Wind", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
+
+# # co2
+# co2.ann.dir <- "~/Dropbox/PalEON CR/phase1a_env_drivers/phase1a_env_drivers_v3/paleon_co2/paleon_annual_co2.nc"
+# co2.ann.nc <- nc_open(co2.ann.dir)
+# co2.ann <- ncvar_get(co2.ann.nc, "co2")
+# nc_close(co2.ann.nc)
+# summary(co2.ann)
+# pdf("PrelimGraphs/MetDrivers_co2_Annual_AllSites.pdf")
+ # par(new=F, mfrow=c(1,1))
+ # plot(co2.ann, type="l", lwd=2, main="CO2", xlab="years since 850-01-01")
+# dev.off()
+# # pdf("PrelimGraphs/MetDrivers_co2_Annual_AllSites.pdf")
+# # par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# # for(s in 1:length(site.list)){
+	# # plot(co2.y[[s]][,"ed2"], ylim=range(co2.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="CO2", xlab="years since 850-01-01", main=paste(site.list[s]))
+# # }
+# # dev.off()
+
+# # lwdown
+# pdf("PrelimGraphs/MetDrivers_lwdown_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="lwdown", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()
+
+# # swdown
+# pdf("PrelimGraphs/MetDrivers_swdown_Annual_AllSites.pdf")
+# par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
+# for(s in 1:length(site.list)){
+	# plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]][["ed2"]], na.rm=T), type="l", lwd=1, ylab="swdown", xlab="years since 850-01-01", main=paste(site.list[s]))
+# }
+# dev.off()

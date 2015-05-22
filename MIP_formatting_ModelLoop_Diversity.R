@@ -22,7 +22,7 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v4", site.list[1])
 files.ed <- dir(dir.ed)                    
 
 dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", paste(site.list[1]))
@@ -103,7 +103,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------  
   # ED
   #-----------------------------------
-  dir.ed <- file.path(model.dir, "ED2.v2.0", site.list[s])   
+  dir.ed <- file.path(model.dir, "ED2.v3", site.list[s])   
   files.ed <- dir(dir.ed)
   #ed.var.list <- list()
   # File loop extracting time series by variable group
@@ -199,7 +199,7 @@ lines(ed.fcomp[[1]][,c(8)], col=pft.colors.ed[2], lwd=3)
 lines(ed.fcomp[[1]][,c(9)], col=pft.colors.ed[3], lwd=3)
 lines(ed.fcomp[[1]][,c(10)], col=pft.colors.ed[4], lwd=3)
 lines(ed.fcomp[[1]][,c(11)], col=pft.colors.ed[5], lwd=3)
-legend("topleft", legend=pfts.ed, col=pft.colors.ed, bg="white", lwd=3)
+legend(x=0, y=0.6, legend=pfts.ed, col=pft.colors.ed, bty="n", bg="white", lwd=3)
 
 pdf(width=11, height=8.5, file="PrelimGraphs/ED_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
@@ -213,7 +213,7 @@ text(x=100, y=.8, site.list[i], cex=1.5, font=2)
 #legend("topleft", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=3)
 }
 # plot(-5, type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
-legend(x=8000, y=0.5, legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=5, cex=1)
+legend("topright", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=5, cex=1, ncol=3)
 dev.off()
 
 #-----------------------------------  
