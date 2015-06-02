@@ -1,14 +1,15 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
-setwd("~/Dropbox/PalEON CR/PalEON_MIP_Site/")
+library(car)
+setwd("~/Desktop/PalEON CR/PalEON_MIP_Site/")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
-model.dir <- "~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output/"
+model.dir <- "~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output/"
 #model.dir <- "phase1a_model_output/"
 
-#~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output
+#~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output
 # Models for which we have data
 model.list <- dir(model.dir)
 model.list
@@ -47,21 +48,27 @@ files.lpj.w <- dir(dir.lpj.w)
 dir.jules.s <- file.path(model.dir, "JULES.v2", paste(site.list[1], "JULES_STATIC", sep="_"))
 files.jules.s <- dir(dir.jules.s)
 
+dir.jules.triff <- file.path(model.dir, "JULES_TRIFFID.v1", paste(site.list[1], "JULES_TRIFFID", sep="_"))
+files.jules.triff <- dir(dir.jules.triff)
+
 dir.linkages <- file.path(model.dir, "LINKAGES.v1.3", paste(site.list[1], "LINKAGES", sep="_"))
 files.linkages <- dir(dir.linkages, ".nc")
 
+dir.sib <- file.path(model.dir, "SiBCASA.v1", paste(site.list[1], "SiBCASA", sep="_"))
+files.sib <- dir(dir.sib, ".nc")
 
 # Opening an example file from each model
-ed <- nc_open(file.path(dir.ed, files.ed[1]))
-ed.lu <- nc_open(file.path(dir.ed.lu, files.ed.lu[1]))
-clm.bgc <- nc_open(file.path(dir.clm.bgc, files.clm.bgc[1]))
-clm.cn <- nc_open(file.path(dir.clm.cn, files.clm.cn[1]))
-lpj.g.m <- nc_open(file.path(dir.lpj.g, files.lpj.g.m[1]))
-lpj.g.y <- nc_open(file.path(dir.lpj.g, files.lpj.g.y[1]))
-lpj.w <- nc_open(file.path(dir.lpj.w, paste(site.list[1], "LPJ-wsl.850.nc", sep=".")))
-jules.s <- nc_open(file.path(dir.jules.s, files.jules.s[1]))
-linkages <- nc_open(file.path(dir.linkages, files.linkages[1]))
-
+ed          <- nc_open(file.path(dir.ed, files.ed[1]))
+ed.lu       <- nc_open(file.path(dir.ed.lu, files.ed.lu[1]))
+clm.bgc     <- nc_open(file.path(dir.clm.bgc, files.clm.bgc[1]))
+clm.cn      <- nc_open(file.path(dir.clm.cn, files.clm.cn[1]))
+lpj.g.m     <- nc_open(file.path(dir.lpj.g, files.lpj.g.m[1]))
+lpj.g.y     <- nc_open(file.path(dir.lpj.g, files.lpj.g.y[1]))
+lpj.w       <- nc_open(file.path(dir.lpj.w, paste(site.list[1], "LPJ-wsl.850.nc", sep=".")))
+jules.s     <- nc_open(file.path(dir.jules.s, files.jules.s[1]))
+jules.triff <- nc_open(file.path(dir.jules.triff, files.jules.triff[1]))
+linkages    <- nc_open(file.path(dir.linkages, files.linkages[1]))
+sib         <- nc_open(file.path(dir.sib, files.sib[1]))
 
 # extracting variable names
 ed.var <- names(ed$var)
@@ -75,6 +82,11 @@ lpj.g.var <- c(lpj.g.var.m, lpj.g.var.y)
 lpj.w.var <- names(lpj.w$var)
 jules.s.var <- names(jules.s$var)[4:length(jules.s$var)]
 jules.s.var2 <- c("TotLivBiom", jules.s.var[2:length(jules.s.var)])
+
+jules.triff.var <- names(jules.triff$var)[4:length(jules.triff$var)]
+jules.triff.var2 <- recode(jules.triff.var, "'TotLivBio'='TotLivBiom'")
+sib.var <- names(sib$var)
+sib.var2 <- recode(sib.var, "'Tranp'='Transp'")
 
 # PFT-level variables need to be dealt with slightly differently than single-string variables
 var.diversity <- c("BA", "Dens", "Fcomp", "PFT", "fpc", "pft-vegc", "pft-lai", "pft-npp", "pft-diam", "pft-height", "nind", "estrate")
@@ -141,6 +153,23 @@ for(i in 2:length(vol.jules.s)){
 } 
 soil.jules.s.5 <- which(abs(soil.jules.s)<=0.5)
 
+
+# soil.jules.triff <- ncvar_get(jules.triff, "soil.depths")
+vol.jules.triff <- c(0.1, 0.25, 0.65, 2)
+soil.jules.triff <- vol.jules.triff[1]
+for(i in 2:length(vol.jules.triff)){
+	soil.jules.triff[i] <- soil.jules.triff[i-1] + vol.jules.triff[i]
+} 
+soil.jules.triff.5 <- which(abs(soil.jules.triff)<=0.5)
+
+soil.sib <- ncvar_get(sib, "SoilDepth")
+soil.sib.5 <- which(abs(soil.sib)<=0.5); vol.sib <- vector(length=length(soil.sib))
+for(i in 1:(length(soil.sib)-1)){
+  vol.sib[length(soil.sib)] <- abs(soil.sib[length(soil.sib)])
+  vol.sib[i] <- abs(abs(soil.sib[i]) - abs(soil.sib[i+1]))
+}
+
+
 # Closing files
 nc_close(ed); 
 nc_close(ed.lu); 
@@ -150,7 +179,9 @@ nc_close(lpj.g.m);
 nc_close(lpj.g.y); 
 nc_close(lpj.w); 
 nc_close(jules.s)
-
+nc_close(jules.triff)
+nc_close(linkages)
+nc_close(sib)
 # ------------------------------------------------------------------------
 # EXTRACTING MODEL OUTPUTS
 # ------------------------------------------------------------------------
@@ -505,6 +536,57 @@ for(i in 1:length(jules.s.var)){
 }
 # -----------------------------------
 
+# -----------------------------------
+# JULES_TRIFFED (Dynamic Veg)
+# Notes for fixing the loop: 
+#	- currently no soil depth
+#	- NPP broken down by PFT
+# -----------------------------------
+pft.vars <- c("NPP_PFT", "Fcomp", "TotLivBio_PFT", "Height", "LAI", "Qh", "Qle", "SnowDepth")
+jules.triff <- list() 
+for(s in 1:length(site.list)){
+  dir.jules.triff <- file.path(model.dir, "JULES_TRIFFID.v1", paste(site.list[s], "JULES_TRIFFID", sep="_"))
+  files.jules.triff <- dir(dir.jules.triff)
+  jules.triff.var.list <- list()
+  #-----------------------------------
+  # File loop extracting time series by variable group
+  for(i in 1:length(files.jules.triff)){
+    ncMT <- nc_open(file.path(dir.jules.triff, files.jules.triff[i]))
+    for(v in 1:length(jules.triff.var)){
+      if(i == 1) temp <- vector() else temp <- jules.triff.var.list[[v]]
+      if(jules.triff.var[v] %in% pft.vars){ 
+      	temp <- c(temp, rowSums(t(ncvar_get(ncMT, jules.triff.var[v]))))}
+      else {
+      if(jules.triff.var[v] %in% soil.var[2:3]){
+        soil.temp <- t(ncvar_get(ncMT, jules.triff.var[v]))[,soil.jules.triff.5]
+        for(q in 1:ncol(soil.temp)){
+        	soil.temp[,q] <- soil.temp[,q]*vol.jules.triff[soil.jules.triff.5[q]]/sum(vol.jules.triff[soil.jules.triff.5])
+        }
+        temp <- c(temp, rowSums(soil.temp))
+      } else {      
+        temp <- c(temp, ncvar_get(ncMT, jules.triff.var[v]))  } }
+      jules.triff.var.list[[v]] <- temp
+     }   
+    nc_close(ncMT)      
+  }
+  names(jules.triff.var.list) <- jules.triff.var2
+  #-----------------------------------
+  # Adding variable groups to master model list
+  for(v in 1:length(jules.triff.var)){
+    if(s == 1){
+      jules.triff[[v]] <- data.frame(jules.triff.var.list[[v]]) 
+    } else {
+      jules.triff[[v]][,s] <- jules.triff.var.list[[v]]
+    }
+  }
+} # Close the model loop
+# Adding site label to each variable
+names(jules.triff) <- c(jules.triff.var2)
+for(i in 1:length(jules.triff.var)){
+  names(jules.triff[[i]]) <- site.list
+}
+# -----------------------------------
+
 
 # -----------------------------------
 # Linkages
@@ -533,6 +615,58 @@ for(s in 1:length(site.list)){
 } # Close the model loop
 # -----------------------------------
 
+# -----------------------------------
+# SiBCASA
+# -----------------------------------
+sib <- list()
+sib.diversity <- list()
+for(s in 1:length(site.list)){
+  dir.sib <- file.path(model.dir, "SiBCASA.v1", paste(site.list[s], "SiBCASA", sep="_"))
+  files.sib <- dir(dir.sib)
+  
+  #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
+  sib.var.list <- list()
+  div.var.list <- list()
+  #-----------------------------------
+  # File loop extracting time series by variable group
+  for(i in 1:length(files.sib)){
+    ncMT <- nc_open(file.path(dir.sib, files.sib[i]))
+    for(v in 1:length(sib.var)){
+      if(i == 1) temp <- vector() else temp <- sib.var.list[[v]]
+      if(sib.var[v] %in% var.diversity[1:3]){
+      	temp <- c(temp, colSums(ncvar_get(ncMT, sib.var[[v]])))
+      } else if(sib.var[v] %in% soil.var[2:3]){
+        soil.temp <- t(ncvar_get(ncMT, sib.var[v]))[,soil.sib.5]
+        for(q in 1:ncol(soil.temp)){
+        	soil.temp[,q] <- soil.temp[,q]* vol.sib[soil.sib.5[q]]/sum(vol.sib[soil.sib.5])
+        }
+        temp <- c(temp, rowSums(soil.temp))
+      } else {      
+      temp <- c(temp, ncvar_get(ncMT, sib.var[v])) }
+      sib.var.list[[v]] <- temp
+    }
+    nc_close(ncMT)      
+  }
+  names(sib.var.list) <- sib.var
+  #-----------------------------------
+  # Adding variable groups to master model list
+  for(v in 1:length(sib.var)){
+    if(s == 1){
+      sib[[v]] <- data.frame(sib.var.list[[v]]) 
+    } else {
+      sib[[v]][,s] <- sib.var.list[[v]]
+    }
+  }
+} # Close the model loop
+# Adding site label to each variable
+names(sib) <- c(sib.var)
+for(i in 1:length(sib.var)){
+  names(sib[[i]]) <- site.list
+}
+# -----------------------------------
+
+
+
 
 # ------------------------------------------------------------------------
 # ORGANIZING MODEL OUTPUTS BY VARIABLE
@@ -544,7 +678,9 @@ names(ed.lu)
 names(lpj.g) 
 names(lpj.w)
 names(jules.s)
+names(jules.triff)
 names(linkages)
+names(sib)
 
 # # ------------------------------------------------------------------------
 # # ------------------------------------------------------------------------
