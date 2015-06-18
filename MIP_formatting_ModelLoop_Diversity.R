@@ -1,12 +1,12 @@
 
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
-#setwd("~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output")
+#setwd("~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
-model.dir <- "~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output"
+model.dir <- "~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output"
 
 # Models for which we have data
 model.list <- dir(model.dir)
@@ -22,14 +22,17 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v4", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v5", site.list[1])
 files.ed <- dir(dir.ed)                    
 
-dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", paste(site.list[1]))
+dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[1])
+files.ed.lu <- dir(dir.ed.lu)                    
+
+dir.clm <- file.path(model.dir, "CLM-BGC.v3", paste(site.list[1]))
 # dir.clm <- file.path(model.dir, "CLM45", paste(site.list[1], "CLM45", sep="."))
 files.clm <- dir(dir.clm)
 
-dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[1], "LPJ-GUESS", sep="_"))
 # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -98,12 +101,12 @@ nc_close(ed); nc_close(clm); nc_close(lpj.g.m); nc_close(lpj.g.y); nc_close(lpj.
 # EXTRACTING MODEL OUTPUTS
 # ------------------------------------------------------------------------
 
-ed.fcomp <- lpj.g.fcomp <- lpj.w.fcomp <- clm.fcomp <- list()
+ed.fcomp <- ed.lu.fcomp <- lpj.g.fcomp <- lpj.w.fcomp <- clm.fcomp <- list()
 for(s in 1:length(site.list)){
   #-----------------------------------  
   # ED
   #-----------------------------------
-  dir.ed <- file.path(model.dir, "ED2.v3", site.list[s])   
+  dir.ed <- file.path(model.dir, "ED2.v5", site.list[s])   
   files.ed <- dir(dir.ed)
   #ed.var.list <- list()
   # File loop extracting time series by variable group
@@ -115,11 +118,25 @@ for(s in 1:length(site.list)){
     nc_close(ncMT)      
   }
   
+  #-----------------------------------  
+  # ED - Land Use
+  #-----------------------------------
+  dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[s])   
+  files.ed.lu <- dir(dir.ed.lu)
+  #ed.var.list <- list()
+  # File loop extracting time series by variable group
+  for(i in 1:length(files.ed.lu)){
+    ncMT <- nc_open(file.path(dir.ed.lu, files.ed[i]))
+    npft <- length(ncvar_get(ncMT, "PFT"))
+    if(i == 1) ed.lu.fcomp[[s]] <- as.data.frame(t(ncvar_get(ncMT, "Fcomp"))) 
+    else ed.lu.fcomp[[s]] <- rbind(ed.lu.fcomp[[s]], t(ncvar_get(ncMT, "Fcomp")))
+    nc_close(ncMT)      
+  }
   
    #-----------------------------------
   # CLM45
   #-----------------------------------
-  dir.clm <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", paste(site.list[s]))
+  dir.clm <- file.path(model.dir, "CLM-BGC.v3", paste(site.list[s]))
   # dir.clm <- file.path(model.dir, "CLM45.v3", paste(site.list[s]))
   files.clm <- dir(dir.clm)  
 #  clm.var.list <- list()
@@ -134,7 +151,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------
   # LPJ-Guess
   #-----------------------------------
-  dir.lpj.g <- file.path(model.dir, "Version1_OldMet", "LPJ-GUESS.v2", paste(site.list[s], "LPJ-GUESS", sep="_"))   
+  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[s], "LPJ-GUESS", sep="_"))   
   # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[s], "LPJ-GUESS", sep="_"))   
   files.lpj.g <- dir(dir.lpj.g)
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -166,9 +183,10 @@ for(s in 1:length(site.list)){
   } # Close the model loop
 
 # Adding site label to each variable
-names(ed.fcomp) <- names(lpj.g.fcomp) <- names(lpj.w.fcomp) <- names(clm.fcomp) <- site.list
+names(ed.fcomp) <- names(ed.lu.fcomp) <- names(lpj.g.fcomp) <- names(lpj.w.fcomp) <- names(clm.fcomp) <- site.list
 for(i in 1:length(site.list)){
   names(ed.fcomp[[i]]) <- ed.pft
+  names(ed.lu.fcomp[[i]]) <- ed.pft
   names(clm.fcomp[[i]]) <- clm.pft
   names(lpj.g.fcomp[[i]]) <- lpj.g.pft
   names(lpj.w.fcomp[[i]]) <- lpj.w.pft
@@ -199,7 +217,7 @@ lines(ed.fcomp[[1]][,c(8)], col=pft.colors.ed[2], lwd=3)
 lines(ed.fcomp[[1]][,c(9)], col=pft.colors.ed[3], lwd=3)
 lines(ed.fcomp[[1]][,c(10)], col=pft.colors.ed[4], lwd=3)
 lines(ed.fcomp[[1]][,c(11)], col=pft.colors.ed[5], lwd=3)
-legend(x=0, y=0.6, legend=pfts.ed, col=pft.colors.ed, bty="n", bg="white", lwd=3)
+legend(x=8000, y=0.6, legend=pfts.ed, col=pft.colors.ed, bty="n", bg="white", lwd=3)
 
 pdf(width=11, height=8.5, file="PrelimGraphs/ED_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
@@ -209,6 +227,35 @@ lines(ed.fcomp[[i]][,c(8)], col=pft.colors.ed[2], lwd=1.5)
 lines(ed.fcomp[[i]][,c(9)], col=pft.colors.ed[3], lwd=1.5)
 lines(ed.fcomp[[i]][,c(10)], col=pft.colors.ed[4], lwd=1.5)
 lines(ed.fcomp[[i]][,c(11)], col=pft.colors.ed[5], lwd=1.5)
+text(x=100, y=.8, site.list[i], cex=1.5, font=2)
+#legend("topleft", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=3)
+}
+# plot(-5, type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=0.0001, xlab="", ylab="Fraction of AGB")
+legend("topright", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=5, cex=1, ncol=3)
+dev.off()
+
+#-----------------------------------  
+# ED - Land Use
+#-----------------------------------
+pft.colors.ed <- c("green3", "darkgreen", "darkgoldenrod3", "darkorange3", "red3")
+pfts.ed <- c("6-North Pine", "8-Late Conifer", "9-Early Hardwood", "10-Mid Hardwood", "11-Late Hardwood")
+
+par(mfrow=c(1,1))
+plot(ed.lu.fcomp[[1]][,6], type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=3, main=site.list[1])
+lines(ed.lu.fcomp[[1]][,c(8)], col=pft.colors.ed[2], lwd=3)
+lines(ed.lu.fcomp[[1]][,c(9)], col=pft.colors.ed[3], lwd=3)
+lines(ed.lu.fcomp[[1]][,c(10)], col=pft.colors.ed[4], lwd=3)
+lines(ed.lu.fcomp[[1]][,c(11)], col=pft.colors.ed[5], lwd=3)
+legend(x=8000, y=0.6, legend=pfts.ed, col=pft.colors.ed, bty="n", bg="white", lwd=3)
+
+pdf(width=11, height=8.5, file="PrelimGraphs/ED-LU_Paleon_Prelim_Fcomp.pdf")
+par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
+for(i in 1:length(site.list)){
+plot(ed.lu.fcomp[[i]][,6], type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=2, xlab="", ylab="Fraction of AGB")
+lines(ed.lu.fcomp[[i]][,c(8)], col=pft.colors.ed[2], lwd=1.5)
+lines(ed.lu.fcomp[[i]][,c(9)], col=pft.colors.ed[3], lwd=1.5)
+lines(ed.lu.fcomp[[i]][,c(10)], col=pft.colors.ed[4], lwd=1.5)
+lines(ed.lu.fcomp[[i]][,c(11)], col=pft.colors.ed[5], lwd=1.5)
 text(x=100, y=.8, site.list[i], cex=1.5, font=2)
 #legend("topleft", legend=pfts.ed, col=pft.colors.ed, bty="n", lwd=3)
 }

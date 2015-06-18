@@ -25,13 +25,13 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v4", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v5", site.list[1])
 files.ed <- dir(dir.ed)
 
-dir.ed.lu <- file.path(model.dir, "ED2.LU.v1", site.list[1])
+dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[1])
 files.ed.lu <- dir(dir.ed.lu)
 
-dir.clm.bgc <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", site.list[1])
+dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v3", site.list[1])
 dir.clm.cn <- file.path(model.dir, "CLM-CN.v1", site.list[1])
 files.clm.bgc <- dir(dir.clm.bgc)
 files.clm.cn <- dir(dir.clm.cn)
@@ -82,9 +82,9 @@ lpj.g.var <- c(lpj.g.var.m, lpj.g.var.y)
 lpj.w.var <- names(lpj.w$var)
 jules.s.var <- names(jules.s$var)[4:length(jules.s$var)]
 jules.s.var2 <- c("TotLivBiom", jules.s.var[2:length(jules.s.var)])
-
 jules.triff.var <- names(jules.triff$var)[4:length(jules.triff$var)]
 jules.triff.var2 <- recode(jules.triff.var, "'TotLivBio'='TotLivBiom'")
+linkages.var <- names(linkages$var)
 sib.var <- names(sib$var)
 sib.var2 <- recode(sib.var, "'Tranp'='Transp'")
 
@@ -191,7 +191,7 @@ nc_close(sib)
 ed <- list()
 ed.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed <- file.path(model.dir, "ED2.v4", site.list[s])
+  dir.ed <- file.path(model.dir, "ED2.v5", site.list[s])
   files.ed <- dir(dir.ed)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -242,7 +242,7 @@ for(i in 1:length(ed.var)){
 ed.lu <- list()
 ed.lu.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed.lu <- file.path(model.dir, "ED2.LU.v1", site.list[s])
+  dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[s])
   files.ed.lu <- dir(dir.ed.lu)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -292,7 +292,7 @@ for(i in 1:length(ed.lu.var)){
 # -----------------------------------
 clm.bgc <- list() 
 for(s in 1:length(site.list)){
-  dir.clm.bgc <- file.path(model.dir, "Version1_OldMet", "CLM45.v3", site.list[s])
+  dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v3", site.list[s])
   # dir.clm.bgc <- file.path(model.dir, "CLM45.v3", site.list[s])
   files.clm.bgc <- dir(dir.clm.bgc)
   clm.bgc.var.list <- list()

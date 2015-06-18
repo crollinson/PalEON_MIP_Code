@@ -32,7 +32,6 @@ for(s in 1:length(site.list)){
 	#---------------------------------------------------------------------
 	# DIVERSITY / STRUCTURE
 	#---------------------------------------------------------------------
-
     #-----------------------------------
 	# Fcomp (check)
     #-----------------------------------
@@ -641,7 +640,7 @@ SoilMoist.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=l
 
 names(GPP.vars) <- names(AGB.vars) <- names(Temp.vars) <- names(Precip.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- c(site.list, "ModelNames")
 summary(GPP.vars)
-
+summary(NPP.vars)
 output.location <- "phase1a_output_variables"
 gpp <- nc_create(file.path(output.location, "GPP.annual.nc"), GPP.vars)
 agb <- nc_create(file.path(output.location, "AGB.annual.nc"), AGB.vars)
@@ -654,14 +653,14 @@ auto.resp <- nc_create(file.path(output.location, "RespirationAuto.annual.nc"), 
 hetero.resp <- nc_create(file.path(output.location, "RespirationHetero.annual.nc"), HeteroResp.vars)
 soilcarb <- nc_create(file.path(output.location, "TotSoilCarb.annual.nc"), TotSoilCarb.vars)
 evap <- nc_create(file.path(output.location, "Evap.annual.nc"), Evap.vars)
-transp <- nc_create(file.path(output.location, "Transp.annual.nc"), Transp.vars)
+# transp <- nc_create(file.path(output.location, "Transp.annual.nc"), Transp.vars)
 soilmoist <- nc_create(file.path(output.location, "SoilMoist.annual.nc"), SoilMoist.vars)
 
 for(i in 1:length(site.list)){
+	ncvar_put(npp, NPP.vars[[i]], t(NPP.y[[i]]))
 	ncvar_put(gpp, GPP.vars[[i]], t(GPP.y[[i]]))
 	ncvar_put(agb, AGB.vars[[i]], t(AGB.y[[i]]))
 	ncvar_put(lai, LAI.vars[[i]], t(LAI.y[[i]]))
-	ncvar_put(npp, NPP.vars[[i]], t(NPP.y[[i]]))
 	ncvar_put(nee, NEE.vars[[i]], t(NEE.y[[i]]))
 	ncvar_put(temp, Temp.vars[[i]], t(tair.y[[i]]))
 	ncvar_put(precip, Precip.vars[[i]], t(precipf.y[[i]]))
@@ -670,7 +669,7 @@ for(i in 1:length(site.list)){
 	ncvar_put(hetero.resp, HeteroResp.vars[[i]], t(HeteroResp.y[[i]]))
 	ncvar_put(soilcarb, TotSoilCarb.vars[[i]], t(TotSoilCarb[[i]]))
 	ncvar_put(evap, Evap.vars[[i]], t(Evap.y[[i]]))
-	ncvar_put(transp, Transp.vars[[i]], t(Transp.y[[i]]))
+	# ncvar_put(transp, Transp.vars[[i]], t(Transp.y[[i]]))
 	ncvar_put(soilmoist, SoilMoist.vars[[i]], t(SoilMoist.y[[i]]))
 }
 ncvar_put(gpp, GPP.vars[[length(site.list)+1]], models.all)
@@ -685,10 +684,10 @@ ncvar_put(auto.resp, AutoResp.vars[[length(site.list)+1]], models.all)
 ncvar_put(hetero.resp, HeteroResp.vars[[length(site.list)+1]], models.all)
 ncvar_put(soilcarb, TotSoilCarb.vars[[length(site.list)+1]], models.all)
 ncvar_put(evap, Evap.vars[[length(site.list)+1]], models.all)
-ncvar_put(transp, Transp.vars[[length(site.list)+1]], models.all)
+# ncvar_put(transp, Transp.vars[[length(site.list)+1]], models.all)
 ncvar_put(soilmoist, SoilMoist.vars[[length(site.list)+1]], models.all)
 
-nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist)
+nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); #nc_close(transp)
 
 # nc <- nc_open(file.path(file.path(output.location, "GPP.annual.nc")))
 # summary(nc$var)
@@ -704,6 +703,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/GPP_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(GPP.y[[s]][,"ed2"]*sec2yr, ylim=range(GPP.y, na.rm=T)*sec2yr, col="black", type="l", lwd=2, ylab="GPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "GPP", sep=": "))
+	lines(GPP.y[[s]][,"ed2.lu"]*sec2yr, col="gray50", lwd=1.5)
 	lines(GPP.y[[s]][,"jules.stat"]*sec2yr, col="orange4", lwd=2.5)
 	lines(GPP.y[[s]][,"jules.triffid"]*sec2yr, col="goldenrod3", lwd=1)
 	lines(GPP.y[[s]][,"lpj.guess"]*sec2yr, col="blue", lwd=2)
@@ -716,7 +716,7 @@ for(s in 1:length(site.list)){
 		points(x=2000-850, y=14*1e3*1e-4, cex=1.5, col="gray50", pch=19)
 		# arrows(x0=2000-850, y0=(14-1.641137817)*1e-6*yr2sec*1e4, x1=2000-850, y1=(14+1.641137817)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
 		}
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==4) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3, cex=0.75)
 }
 dev.off()
 
@@ -727,6 +727,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/NPP_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(NPP.y[[s]][,"ed2"], ylim=range(NPP.y, na.rm=T), col="black", type="l", lwd=2, ylab="NPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NPP", sep=": "))
+	lines(NPP.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -735,7 +736,7 @@ for(s in 1:length(site.list)){
 	lines(NPP.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(NPP.y[[s]][,"linkages"], col="purple2", lwd=3)
 	lines(NPP.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==6) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -744,6 +745,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/NPP_Annual_AllSites_Truncated.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(NPP.y[[s]][,"ed2"], ylim=c(0, 8e-8), col="black", type="l", lwd=2, ylab="NPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NPP", sep=": "))
+	lines(NPP.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -752,7 +754,7 @@ for(s in 1:length(site.list)){
 	lines(NPP.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(NPP.y[[s]][,"linkages"], col="purple2", lwd=3)
 	lines(NPP.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==5) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.75)
 }
 dev.off()
 
@@ -762,6 +764,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/NEE_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(-NEE.y[[s]][,"ed2"], type="l", ylim=range(NEE.y, na.rm=T), lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
+	lines(NEE.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -775,7 +778,7 @@ for(s in 1:length(site.list)){
 		points(x=2000-850, y=2.453846154*1e3*yr2sec*1e-4, cex=2, col="gray70", pch=19)
 		# arrows(x0=2000-850, y0=(2.064461538)*1e-6*yr2sec*1e4, x1=2000-850, y1=(2.725384615)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
 		}
-	if(s==5) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=2)
+	if(s==1) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.75)
 }
 dev.off()
 
@@ -783,6 +786,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/NEE_Annual_AllSites_Truncated.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(-NEE.y[[s]][,"ed2"], type="l", ylim=c(-4e-8, 5e-8), lwd=2, ylab="NEE KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "NEE", sep=": "))
+	lines(NEE.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -913,7 +917,7 @@ dev.off()
 pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites_Truncated.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(TotSoilCarb[[s]][,"ed2"], ylim=c(0,150), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
+	plot(TotSoilCarb[[s]][,"ed2"], ylim=c(0,100), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
 	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=0.5)

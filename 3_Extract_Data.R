@@ -10,7 +10,7 @@ library(ggplot2)
 library(grid)
 library(nlme)
 
-setwd("~/Desktop/PalEON CR/paleon_mip_site")
+setwd("~/Dropbox/PalEON CR/paleon_mip_site")
 outputs <- "phase1a_output_variables"
 years <- 850:2010
 
@@ -41,7 +41,7 @@ years <- ncvar_get(gpp, "Year")-1000
 
 sites <- names(gpp$var)[1:(length(names(gpp$var))-1)]
 
-extract the data into lists that are easy to use
+# extract the data into lists that are easy to use
 #sites <- "PHA"
 GPP <- AGB <- LAI <- NPP <- NEE <- TEMP <- PRECIP <- RA <- RH <- SOILMOIST <- SOILCARB <- EVAP <- TRANSP <- list()
 for(i in 1:length(sites)){
@@ -56,7 +56,8 @@ for(i in 1:length(sites)){
 	RH[[i]]        <- data.frame(t(ncvar_get(hetero.resp, sites[i])))
 	SOILCARB[[i]]  <- data.frame(t(ncvar_get(soilcarb, sites[i])))
 	SOILMOIST[[i]] <- data.frame(t(ncvar_get(soilmoist, sites[i])))
-	TRANSP[[i]]    <- data.frame(t(ncvar_get(transp, sites[i])))
+	# TRANSP[[i]]    <- data.frame(t(ncvar_get(transp, sites[i])))
+	TRANSP[[i]]		   <- data.frame(array(NA, dim=dim(SOILMOIST[[i]])))
 	EVAP[[i]]      <- data.frame(t(ncvar_get(evap, sites[i])))
 
 	names(GPP[[i]]) <- names(AGB[[i]]) <- names(LAI[[i]]) <- names(NPP[[i]]) <- names(NEE[[i]]) <- names(TEMP[[i]]) <- names(PRECIP[[i]]) <- names(RA[[i]]) <- names(RH[[i]]) <- names(SOILCARB[[i]]) <- names(SOILMOIST[[i]]) <- names(EVAP[[i]]) <- names(TRANSP[[i]]) <- model.names
