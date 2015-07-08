@@ -656,7 +656,8 @@ evap <- nc_create(file.path(output.location, "Evap.annual.nc"), Evap.vars)
 # transp <- nc_create(file.path(output.location, "Transp.annual.nc"), Transp.vars)
 soilmoist <- nc_create(file.path(output.location, "SoilMoist.annual.nc"), SoilMoist.vars)
 
-for(i in 1:length(site.list)){
+# for(i in 1:5){
+for(i in 1:length(sites)){
 	ncvar_put(npp, NPP.vars[[i]], t(NPP.y[[i]]))
 	ncvar_put(gpp, GPP.vars[[i]], t(GPP.y[[i]]))
 	ncvar_put(agb, AGB.vars[[i]], t(AGB.y[[i]]))
@@ -672,6 +673,11 @@ for(i in 1:length(site.list)){
 	# ncvar_put(transp, Transp.vars[[i]], t(Transp.y[[i]]))
 	ncvar_put(soilmoist, SoilMoist.vars[[i]], t(SoilMoist.y[[i]]))
 }
+
+# NOTE: Some very weird bug is causing PMB to not save right in the loop, 
+#   so we need to repeat it manually here
+ncvar_put(npp, NPP.vars[[6]], t(NPP.y[[6]]))
+
 ncvar_put(gpp, GPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(agb, AGB.vars[[length(site.list)+1]], models.all)
 ncvar_put(lai, LAI.vars[[length(site.list)+1]], models.all)
@@ -705,10 +711,10 @@ for(s in 1:length(site.list)){
 	plot(GPP.y[[s]][,"ed2"]*sec2yr, ylim=range(GPP.y, na.rm=T)*sec2yr, col="black", type="l", lwd=2, ylab="GPP KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "GPP", sep=": "))
 	lines(GPP.y[[s]][,"ed2.lu"]*sec2yr, col="gray50", lwd=1.5)
 	lines(GPP.y[[s]][,"jules.stat"]*sec2yr, col="orange4", lwd=2.5)
-	lines(GPP.y[[s]][,"jules.triffid"]*sec2yr, col="goldenrod3", lwd=1)
+	lines(GPP.y[[s]][,"jules.triffid"]*sec2yr, col="goldenrod3", lwd=1.5)
 	lines(GPP.y[[s]][,"lpj.guess"]*sec2yr, col="blue", lwd=2)
 	lines(GPP.y[[s]][,"lpj.wsl"]*sec2yr, col="red", lwd=2)
-	lines(GPP.y[[s]][,"clm.bgc"]*sec2yr, col="green3", lwd=1)
+	lines(GPP.y[[s]][,"clm.bgc"]*sec2yr, col="green3", lwd=2)
 	lines(GPP.y[[s]][,"clm.cn"]*sec2yr, col="darkolivegreen", lwd=2)
 	lines(GPP.y[[s]][,"sibcasa"]*sec2yr, col="salmon", lwd=2)
 	if(site.list[s]=="PHA") {
@@ -730,7 +736,7 @@ for(s in 1:length(site.list)){
 	lines(NPP.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(NPP.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(NPP.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(NPP.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
@@ -748,7 +754,7 @@ for(s in 1:length(site.list)){
 	lines(NPP.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NPP.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NPP.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NPP.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(NPP.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(NPP.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(NPP.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
@@ -767,7 +773,7 @@ for(s in 1:length(site.list)){
 	lines(NEE.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(NEE.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(NEE.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(NEE.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
@@ -789,7 +795,7 @@ for(s in 1:length(site.list)){
 	lines(NEE.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(NEE.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(NEE.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(NEE.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(NEE.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(NEE.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(NEE.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
@@ -800,7 +806,7 @@ for(s in 1:length(site.list)){
 		points(x=2000-850, y=2.453846154*1e3*yr2sec*1e-4, cex=2, col="gray70", pch=19)
 		# arrows(x0=2000-850, y0=(2.064461538)*1e-6*yr2sec*1e4, x1=2000-850, y1=(2.725384615)*1e-6*yr2sec*1e4, length=0, lwd=2, col="gray50") 
 		}
-	if(s==5) legend("bottomright", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==1) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -810,15 +816,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/AutoResp_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AutoResp.y[[s]][,"ed2"], ylim=range(AutoResp.y, na.rm=T), type="l", lwd=2, ylab="AutoResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "AutoResp", sep=": "))
+	lines(AutoResp.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(AutoResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(AutoResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(AutoResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(AutoResp.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	# lines(AutoResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(AutoResp.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(AutoResp.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(AutoResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(AutoResp.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SibCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", cex=1.2, ncol=2)
+	if(s==5) legend("topleft", legend=c("ED2","ED-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SibCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", cex=0.5, ncol=2)
 }
 dev.off()
 
@@ -828,15 +835,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/HeteroResp_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(HeteroResp.y[[s]][,"ed2"], ylim=range(HeteroResp.y, na.rm=T), type="l", lwd=2, ylab="HeteroResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "HeteroResp", sep=": "))
+	lines(HeteroResp.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(HeteroResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(HeteroResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(HeteroResp.y[[s]][,"jules.triffid"], col="goldenrod", lwd=2)
 	lines(HeteroResp.y[[s]][,"linkages"], col="purple2", lwd=3)
 	lines(HeteroResp.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==6) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
 }
 dev.off()
 
@@ -844,15 +852,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/HeteroResp_Annual_AllSites_Truncate
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(HeteroResp.y[[s]][,"ed2"], ylim=c(0, 8e-8), type="l", lwd=2, ylab="HeteroResp KgC/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "HeteroResp", sep=": "))
+	lines(HeteroResp.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(HeteroResp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(HeteroResp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
-	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(HeteroResp.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(HeteroResp.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(HeteroResp.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(HeteroResp.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(HeteroResp.y[[s]][,"linkages"], col="purple2", lwd=3)
 	lines(HeteroResp.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="o", bg="white", ncol=3)
+	if(s==5) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="o", bg="white", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -862,9 +871,10 @@ pdf(width=8.5, height=11, file="PrelimGraphs/AGB_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(AGB.y[[s]][,"ed2"], ylim=range(AGB.y, na.rm=T), type="l", lwd=2, ylab="AGB KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "AGB", sep=": "))
+	lines(AGB.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(AGB.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(AGB.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(AGB.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(AGB.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(AGB.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(AGB.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(AGB.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
@@ -874,7 +884,7 @@ for(s in 1:length(site.list)){
 		# From Urbanski et al 2007
 		points(x=2000-850, y=107.7942857*1e3*1e-4, cex=2, col="gray70", pch=19)
 		}
-	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==5) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -884,15 +894,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/TotLivBiom_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotLivBiom[[s]][,"ed2"], ylim=range(TotLivBiom, na.rm=T), type="l", lwd=2, ylab="TotLivBiom KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotLivBiom", sep=": "))
+	lines(TotLivBiom[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(TotLivBiom[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotLivBiom[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(TotLivBiom[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotLivBiom[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(TotLivBiom[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(TotLivBiom[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(TotLivBiom[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(TotLivBiom[[s]][,"linkages"], col="purple2", lwd=2)
 	lines(TotLivBiom[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==6) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==6) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -902,15 +913,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotSoilCarb[[s]][,"ed2"], ylim=range(TotSoilCarb, na.rm=T), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
+	lines(TotSoilCarb[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(TotSoilCarb[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(TotSoilCarb[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(TotSoilCarb[[s]][,"linkages"], col="purple2", lwd=2)
 	lines(TotSoilCarb[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==2) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=2)
+	if(s==2) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=2, cex=0.75)
 }
 dev.off()
 
@@ -918,15 +930,16 @@ pdf(width=8.5, height=11, file="PrelimGraphs/TotSoilCarb_Annual_AllSites_Truncat
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(TotSoilCarb[[s]][,"ed2"], ylim=c(0,100), type="l", lwd=2, ylab="TotSoilCarb KgC/m2", xlab="years since 850-01-01", main=paste(site.list[s], "TotSoilCarb", sep=": "))
+	lines(TotSoilCarb[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(TotSoilCarb[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(TotSoilCarb[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(TotSoilCarb[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(TotSoilCarb[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(TotSoilCarb[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(TotSoilCarb[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(TotSoilCarb[[s]][,"linkages"], col="purple2", lwd=2)
 	lines(TotSoilCarb[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==3) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==3) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -936,6 +949,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/LAI_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(LAI.y[[s]][,"ed2"], ylim=range(LAI.y, na.rm=T), col="black", type="l", lwd=2, ylab="LAI", xlab="years since 850-01-01", main=paste(site.list[s], "LAI", sep=": "))
+	lines(LAI.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(LAI.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(LAI.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
 	lines(LAI.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
@@ -948,7 +962,7 @@ for(s in 1:length(site.list)){
 		# From Urbanski et al 2007
 		points(x=2000-850, y=5.225, cex=2, col="gray50", pch=19)
 		}
-	if(s==4) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", bg="white", ncol=3)
+	if(s==4) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", bg="white", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -959,6 +973,7 @@ par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 #	plot(Evap.y[[s]][,"ed2"], ylim=range(Evap.y, na.rm=T), type="l", lwd=2, ylab="Evap kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Evaporation", sep=": "))
 	plot(Evap.y[[s]][,"ed2"], ylim=c(min(Evap.y[[s]], na.rm=T), max(Evap.y[[s]][,1:(ncol(Evap.y$PHA)-1)], na.rm=T)), type="l", lwd=2, ylab="Evap kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Evaporation", sep=": "))
+	lines(Evap.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(Evap.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Evap.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(Evap.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -967,7 +982,7 @@ for(s in 1:length(site.list)){
 	lines(Evap.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(Evap.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(Evap.y[[s]][,"sibcasa"]/sec2yr, col="salmon", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==5) legend("topleft", legend=c("ED2", "ED-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "LINKAGES", "SibCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "purple2", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -998,8 +1013,9 @@ for(s in 1:length(site.list)){
 	lines(SoilMoist.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(SoilMoist.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(SoilMoist.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
+	lines(SoilMoist.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(SoilMoist.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==1) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==1) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -1009,6 +1025,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/SoilTemp_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(SoilTemp.y[[s]][,"ed2"], ylim=c(270, 285), type="l", lwd=2, ylab="SoilTemp K", xlab="years since 850-01-01", main=paste(site.list[s], "Soil Temperature", sep=": "))
+	lines(SoilTemp.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(SoilTemp.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	# lines(SoilTemp.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(SoilTemp.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -1016,7 +1033,7 @@ for(s in 1:length(site.list)){
 	lines(SoilTemp.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(SoilTemp.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(SoilTemp.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==1) legend("bottomleft", legend=c("ED2", "LPJ-GUESS", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "blue", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==1) legend("bottomleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "blue", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -1026,6 +1043,7 @@ pdf(width=8.5, height=11, file="PrelimGraphs/Runoff_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(Qs.y[[s]][,"ed2"], ylim=range(Qs.y, na.rm=T), type="l", lwd=2, ylab="Runoff kg/m2/s", xlab="years since 850-01-01", main=paste(site.list[s], "Runoff", sep=": "))
+	lines(Qs.y[[s]][,"ed2.lu"], col="gray50", lwd=1.5)
 	lines(Qs.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 	lines(Qs.y[[s]][,"lpj.wsl"], col="red", lwd=2)
 	lines(Qs.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
@@ -1033,7 +1051,7 @@ for(s in 1:length(site.list)){
 	lines(Qs.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(Qs.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
 	lines(Qs.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==5) legend("topleft", legend=c("ED2", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3)
+	if(s==5) legend("topleft", legend=c("ED2", "ED2-LU", "LPJ-GUESS", "LPJ-WSL", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "blue", "red", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3, cex=0.5)
 }
 dev.off()
 
@@ -1058,7 +1076,7 @@ for(s in 1:length(site.list)){
 	plot(tair.y[[s]][,"ed2"], ylim=c(270, max(tair.y[[s]], na.rm=T)), type="l", lwd=2, ylab="Air Temp (k)", xlab="years since 850-01-01", main=paste(site.list[s], "Air Temp", sep=": "))
 	lines(tair.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
 #	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(tair.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(tair.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(tair.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(tair.y[[s]][,"jules.stat"], col="orange4", lwd=1.5)
 	lines(tair.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=1.5)
@@ -1066,7 +1084,8 @@ for(s in 1:length(site.list)){
 	# lines(tair.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=1)
 	lines(tair.y[[s]][,"ed2"], col="black", lwd=1)
 	lines(tair.y[[s]][,"sibcasa"], col="salmon", lwd=1)
-	if(s==6) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "green3", "blue", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3)
+	lines(tair.y[[s]][,"ed2.lu"], col="gray50", lwd=0.8)
+	if(s==6) legend("bottomleft", legend=c("ED2", "ED2-LU","CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black","gray50", "green3", "blue", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=3, cex=0.75)
 }
 dev.off()
 
@@ -1075,14 +1094,16 @@ pdf("PrelimGraphs/MetDrivers_precipf_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(precipf.y[[s]][,"ed2"], ylim=range(precipf.y, na.rm=T), type="l", lwd=2, ylab="Precip Rate", xlab="years since 850-01-01", main=paste(site.list[s], "Precip Rate", sep=": "))
+	lines(precipf.y[[s]][,"ed2.lu"], col="gray50", lwd=2)
 	lines(precipf.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
 #	lines(precipf.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(precipf.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(precipf.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(precipf.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(precipf.y[[s]][,"jules.stat"], col="orange4", lwd=1)
 	lines(precipf.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=1)
 	lines(precipf.y[[s]][,"sibcasa"], col="salmon", lwd=1)
-	if(s==5) legend("topleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "green3", "darkolivegreen", "blue", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=2)
+	lines(precipf.y[[s]][,"ed2.lu"], col="gray50", lwd=0.8)
+	if(s==5) legend("topleft", legend=c("ED2", "ED2-LU", "CLM-BGC", "CLM-CN", "LPJ-GUESS", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "green3", "darkolivegreen", "blue", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=2)
 }
 dev.off()
 
@@ -1091,9 +1112,10 @@ pdf("PrelimGraphs/MetDrivers_swdown_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
 	plot(swdown.y[[s]][,"ed2"], ylim=range(swdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="swdown (W/m2/s)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
+	lines(swdown.y[[s]][,"ed2.lu"], col="gray50", lwd=2)
 	lines(swdown.y[[s]][,"lpj.guess"], col="blue", lwd=2)
 #	lines(tair.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(swdown.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
+	lines(swdown.y[[s]][,"clm.bgc"], col="green3", lwd=2)
 	lines(swdown.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
 	lines(swdown.y[[s]][,"jules.stat"], col="orange4", lwd=2)
 	lines(swdown.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
@@ -1105,15 +1127,16 @@ dev.off()
 pdf("PrelimGraphs/MetDrivers_lwdown_Annual_AllSites.pdf")
 par(mfrow=c(round((length(site.list)+.5)/2, 0), 2), mar=c(4,5,4,1)+0.1)
 for(s in 1:length(site.list)){
-	plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]], na.rm=T), type="l", lwd=2, ylab="swdown (W/m2/s)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Shortwave Rad", sep=": "))
-	lines(lwdown.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
+	plot(lwdown.y[[s]][,"ed2"], ylim=range(lwdown.y[[s]], na.rm=T), type="l", lwd=3, ylab="swdown (W/m2/s)", xlab="years since 850-01-01", main=paste(site.list[s], "Downwelling Longwave Rad", sep=": "))
+	# lines(lwdown.y[[s]][,"lpj.guess"], col="blue", lwd=2.5)
 #	lines(lwdown.y[[s]][,"lpj.wsl"], col="red", lwd=2)
-	lines(lwdown.y[[s]][,"clm.bgc"], col="green3", lwd=0.5)
-	lines(lwdown.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
-	lines(lwdown.y[[s]][,"jules.stat"], col="orange4", lwd=2)
-	lines(lwdown.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2)
+	# lines(lwdown.y[[s]][,"clm.bgc"], col="green3", lwd=2)
+	# lines(lwdown.y[[s]][,"clm.cn"], col="darkolivegreen", lwd=2)
+	lines(lwdown.y[[s]][,"jules.stat"], col="orange4", lwd=2.75)
+	lines(lwdown.y[[s]][,"jules.triffid"], col="goldenrod3", lwd=2.5)
 	lines(lwdown.y[[s]][,"sibcasa"], col="salmon", lwd=2)
-	if(s==1) legend("bottomleft", legend=c("ED2", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=2)
+	lines(lwdown.y[[s]][,"ed2.lu"], col="gray50", lwd=1)
+	if(s==1) legend("bottomleft", legend=c("ED2", "ED2-LU", "CLM-BGC", "CLM-CN", "JULES-STATIC", "JULES-TRIFFID", "SiBCASA"), col=c("black", "gray50", "green3", "darkolivegreen", "orange4", "goldenrod3", "salmon"), lwd=2, bty="n", ncol=2, cex=0.5)
 }
 dev.off()
 
