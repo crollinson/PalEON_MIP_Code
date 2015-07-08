@@ -1,12 +1,12 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
 library(car)
-setwd("~/Desktop/PalEON CR/PalEON_MIP_Site/")
+setwd("~/Desktop/Research/PalEON CR/PalEON_MIP_Site/")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
-model.dir <- "~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output/"
+model.dir <- "~/Desktop/Research/PalEON CR/PalEON_MIP_Site/phase1a_model_output"
 #model.dir <- "phase1a_model_output/"
 
 #~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output
@@ -25,14 +25,14 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v5", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v6", site.list[1])
 files.ed <- dir(dir.ed)
 
-dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[1])
+dir.ed.lu <- file.path(model.dir, "ED2-LU.v4", site.list[1])
 files.ed.lu <- dir(dir.ed.lu)
 
-dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v3", site.list[1])
-dir.clm.cn <- file.path(model.dir, "CLM-CN.v1", site.list[1])
+dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v4", site.list[1])
+dir.clm.cn <- file.path(model.dir, "CLM-CN.v2", site.list[1])
 files.clm.bgc <- dir(dir.clm.bgc)
 files.clm.cn <- dir(dir.clm.cn)
 
@@ -191,7 +191,7 @@ nc_close(sib)
 ed <- list()
 ed.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed <- file.path(model.dir, "ED2.v5", site.list[s])
+  dir.ed <- file.path(model.dir, "ED2.v6", site.list[s])
   files.ed <- dir(dir.ed)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -242,7 +242,7 @@ for(i in 1:length(ed.var)){
 ed.lu <- list()
 ed.lu.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed.lu <- file.path(model.dir, "ED2-LU.v2", site.list[s])
+  dir.ed.lu <- file.path(model.dir, "ED2-LU.v4", site.list[s])
   files.ed.lu <- dir(dir.ed.lu)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
@@ -292,7 +292,7 @@ for(i in 1:length(ed.lu.var)){
 # -----------------------------------
 clm.bgc <- list() 
 for(s in 1:length(site.list)){
-  dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v3", site.list[s])
+  dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v4", site.list[s])
   # dir.clm.bgc <- file.path(model.dir, "CLM45.v3", site.list[s])
   files.clm.bgc <- dir(dir.clm.bgc)
   clm.bgc.var.list <- list()
@@ -340,7 +340,7 @@ for(i in 1:length(clm.bgc.var)){
 # -----------------------------------
 clm.cn <- list() 
 for(s in 1:length(site.list)){
-  dir.clm.cn <- file.path(model.dir, "CLM-CN.v1", site.list[s])
+  dir.clm.cn <- file.path(model.dir, "CLM-CN.v2", site.list[s])
   files.clm.cn <- dir(dir.clm.cn)
   clm.cn.var.list <- list()
   #-----------------------------------
