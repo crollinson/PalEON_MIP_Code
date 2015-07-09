@@ -596,30 +596,44 @@ dim.allmods2 <- ncdim_def(name="Model Names", units="", vals=1:ncol(GPP.y[[1]]),
 # dim.3mods2 <- ncdim_def(name="Model Names", units="", vals=1:3, create_dimvar=FALSE)
 # dim.4mods2 <- ncdim_def(name="Model Names", units="", vals=1:4, create_dimvar=FALSE)
 
-units.fluxes <- "kg m-2 s-1"
-units.pools <- "kgC m-2 s-1"
-units.lai <- "m2 m-2"
-units.temp <- "K"
-units.soil.moist <- "kg m-2"
+units.fluxes     <- "kg m-2 s-1"
+units.pools      <- "kgC m-2"
+units.lai        <- "m2 m-2"
+units.temp       <- "K"
+units.smoist <- "kg m-2"
+units.radiation  <- "W m-2"
+units.psurf      <- "Pa"
+units.qair       <- "kg kg-1"
+units.wind       <- "m s-1"
 models.all <- names(GPP.y[[1]])
 # models.4 <- names(tair.y[[1]])
 
-GPP.vars <- AGB.vars <- LAI.vars <-  NEE.vars <- NPP.vars <- Temp.vars <- Precip.vars <- AutoResp.vars <- HeteroResp.vars <- TotSoilCarb.vars <- Evap.vars <- Transp.vars <- SoilMoist.vars <- list()
+GPP.vars <- AGB.vars <- LAI.vars <-  NEE.vars <- NPP.vars <- AutoResp.vars <- HeteroResp.vars <- TotSoilCarb.vars <- Evap.vars <- Transp.vars <- SoilMoist.vars <- list()
+
+tair.vars <- precipf.vars <- swdown.vars <- lwdown.vars <- wind.vars <- psurf.vars <- qair.vars <- list()
+
 for(i in 1:length(site.list)){
 	GPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	AGB.vars[[i]] <- ncvar_def(site.list[i], units= units.pools, dim=list(dim.allmods, dim.years))
-	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.lai, dim=list(dim.allmods, dim.years))
+	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.lai,    dim=list(dim.allmods, dim.years))
 	NEE.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	NPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	Temp.vars[[i]] <- ncvar_def(site.list[i], units=units.temp, dim=list(dim.allmods, dim.years))
-	Precip.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 
-	AutoResp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	HeteroResp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	TotSoilCarb.vars[[i]] <- ncvar_def(site.list[i], units=units.pools, dim=list(dim.allmods, dim.years))
-	Evap.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	Transp.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
-	SoilMoist.vars[[i]] <- ncvar_def(site.list[i], units=units.soil.moist, dim=list(dim.allmods, dim.years))
+	AutoResp.vars[[i]]    <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	HeteroResp.vars[[i]]  <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	TotSoilCarb.vars[[i]] <- ncvar_def(site.list[i], units=units.pools,  dim=list(dim.allmods, dim.years))
+	Evap.vars[[i]]        <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	Transp.vars[[i]]      <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	SoilMoist.vars[[i]]   <- ncvar_def(site.list[i], units=units.smoist, dim=list(dim.allmods, dim.years))
+
+	# met drivers
+	tair.vars[[i]]    <- ncvar_def(site.list[i], units=units.temp,      dim=list(dim.allmods, dim.years))
+	precipf.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes,    dim=list(dim.allmods, dim.years))
+	swdown.vars[[i]]  <- ncvar_def(site.list[i], units=units.radiation, dim=list(dim.allmods, dim.years))
+	lwdown.vars[[i]]  <- ncvar_def(site.list[i], units=units.radiation, dim=list(dim.allmods, dim.years))
+	wind.vars[[i]]    <- ncvar_def(site.list[i], units=units.wind,      dim=list(dim.allmods, dim.years))
+	psurf.vars[[i]]   <- ncvar_def(site.list[i], units=units.psurf,     dim=list(dim.allmods, dim.years))
+	qair.vars[[i]]    <- ncvar_def(site.list[i], units=units.qair,      dim=list(dim.allmods, dim.years))
 
 }	
 GPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
@@ -627,8 +641,6 @@ AGB.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(di
 LAI.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NEE.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
-Temp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
-Precip.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
 AutoResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 HeteroResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
@@ -637,41 +649,66 @@ Evap.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(d
 Transp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 SoilMoist.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
+tair.vars[[length(site.list)+1]]    <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+precipf.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+swdown.vars[[length(site.list)+1]]  <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+lwdown.vars[[length(site.list)+1]]  <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+wind.vars[[length(site.list)+1]]    <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+psurf.vars[[length(site.list)+1]]   <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+qair.vars[[length(site.list)+1]]    <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
-names(GPP.vars) <- names(AGB.vars) <- names(Temp.vars) <- names(Precip.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- c(site.list, "ModelNames")
+
+names(GPP.vars) <- names(AGB.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <-  names(tair.vars) <- names(precipf.vars) <- names(swdown.vars) <- names(lwdown.vars) <- names(wind.vars) <- names(psurf.vars) <- names(qair.vars) <- c(site.list, "ModelNames")
 summary(GPP.vars)
 summary(NPP.vars)
+
 output.location <- "phase1a_output_variables"
 gpp <- nc_create(file.path(output.location, "GPP.annual.nc"), GPP.vars)
 agb <- nc_create(file.path(output.location, "AGB.annual.nc"), AGB.vars)
 lai <- nc_create(file.path(output.location, "LAI.annual.nc"), LAI.vars)
 npp <- nc_create(file.path(output.location, "NPP.annual.nc"), NPP.vars)
 nee <- nc_create(file.path(output.location, "NEE.annual.nc"), NEE.vars)
-temp <- nc_create(file.path(output.location, "Temp.annual.nc"), Temp.vars)
-precip <- nc_create(file.path(output.location, "Precip.annual.nc"), Precip.vars)
-auto.resp <- nc_create(file.path(output.location, "RespirationAuto.annual.nc"), AutoResp.vars)
+auto.resp   <- nc_create(file.path(output.location, "RespirationAuto.annual.nc"  ), AutoResp.vars)
 hetero.resp <- nc_create(file.path(output.location, "RespirationHetero.annual.nc"), HeteroResp.vars)
-soilcarb <- nc_create(file.path(output.location, "TotSoilCarb.annual.nc"), TotSoilCarb.vars)
-evap <- nc_create(file.path(output.location, "Evap.annual.nc"), Evap.vars)
+soilcarb    <- nc_create(file.path(output.location, "TotSoilCarb.annual.nc"      ), TotSoilCarb.vars)
+evap        <- nc_create(file.path(output.location, "Evap.annual.nc"             ), Evap.vars)
+soilmoist   <- nc_create(file.path(output.location, "SoilMoist.annual.nc"        ), SoilMoist.vars)
 # transp <- nc_create(file.path(output.location, "Transp.annual.nc"), Transp.vars)
-soilmoist <- nc_create(file.path(output.location, "SoilMoist.annual.nc"), SoilMoist.vars)
+
+# All Drivers
+tair    <- nc_create(file.path(output.location, "tair.annual.nc"   ), tair.vars   )
+precipf <- nc_create(file.path(output.location, "precipf.annual.nc"), precipf.vars)
+swdown  <- nc_create(file.path(output.location, "swdown.annual.nc" ), swdown.vars )
+lwdown  <- nc_create(file.path(output.location, "lwdown.annual.nc" ), lwdown.vars )
+wind    <- nc_create(file.path(output.location, "wind.annual.nc"   ), wind.vars   )
+psurf   <- nc_create(file.path(output.location, "psurf.annual.nc"  ), psurf.vars  )
+qair    <- nc_create(file.path(output.location, "qair.annual.nc"   ), qair.vars   )
+
 
 # for(i in 1:5){
-for(i in 1:length(sites)){
+for(i in 1:length(site.list)){
 	ncvar_put(npp, NPP.vars[[i]], t(NPP.y[[i]]))
 	ncvar_put(gpp, GPP.vars[[i]], t(GPP.y[[i]]))
 	ncvar_put(agb, AGB.vars[[i]], t(AGB.y[[i]]))
 	ncvar_put(lai, LAI.vars[[i]], t(LAI.y[[i]]))
 	ncvar_put(nee, NEE.vars[[i]], t(NEE.y[[i]]))
-	ncvar_put(temp, Temp.vars[[i]], t(tair.y[[i]]))
-	ncvar_put(precip, Precip.vars[[i]], t(precipf.y[[i]]))
 
-	ncvar_put(auto.resp, AutoResp.vars[[i]], t(AutoResp.y[[i]]))
-	ncvar_put(hetero.resp, HeteroResp.vars[[i]], t(HeteroResp.y[[i]]))
-	ncvar_put(soilcarb, TotSoilCarb.vars[[i]], t(TotSoilCarb[[i]]))
-	ncvar_put(evap, Evap.vars[[i]], t(Evap.y[[i]]))
-	# ncvar_put(transp, Transp.vars[[i]], t(Transp.y[[i]]))
-	ncvar_put(soilmoist, SoilMoist.vars[[i]], t(SoilMoist.y[[i]]))
+	ncvar_put(auto.resp  , AutoResp.vars[[i]]   , t(AutoResp.y[[i]])   )
+	ncvar_put(hetero.resp, HeteroResp.vars[[i]] , t(HeteroResp.y[[i]]) )
+	ncvar_put(soilcarb   , TotSoilCarb.vars[[i]], t(TotSoilCarb[[i]])  )
+	ncvar_put(evap       , Evap.vars[[i]]       , t(Evap.y[[i]])       )
+	ncvar_put(soilmoist  , SoilMoist.vars[[i]]  , t(SoilMoist.y[[i]])  )
+	# ncvar_put(transp   , Transp.vars[[i]], t(Transp.y[[i]]))
+
+	# Drivers
+	ncvar_put(tair   , tair.vars[[i]]   , t(tair.y[[i]])    )
+	ncvar_put(precipf, precipf.vars[[i]], t(precipf.y[[i]]) )
+	ncvar_put(swdown , swdown.vars[[i]] , t(swdown.y[[i]])  )
+	ncvar_put(lwdown , lwdown.vars[[i]] , t(lwdown.y[[i]])  )
+	ncvar_put(wind   , wind.vars[[i]]   , t(wind.y[[i]])    )
+	ncvar_put(psurf  , psurf.vars[[i]]  , t(psurf.y[[i]])   )
+	ncvar_put(qair   , qair.vars[[i]]   , t(qair.y[[i]])    )
+
 }
 
 # NOTE: Some very weird bug is causing PMB to not save right in the loop, 
@@ -683,17 +720,25 @@ ncvar_put(agb, AGB.vars[[length(site.list)+1]], models.all)
 ncvar_put(lai, LAI.vars[[length(site.list)+1]], models.all)
 ncvar_put(npp, NPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(nee, NEE.vars[[length(site.list)+1]], models.all)
-ncvar_put(temp, Temp.vars[[length(site.list)+1]], models.all)
-ncvar_put(precip, Precip.vars[[length(site.list)+1]], models.all)
 
-ncvar_put(auto.resp, AutoResp.vars[[length(site.list)+1]], models.all)
-ncvar_put(hetero.resp, HeteroResp.vars[[length(site.list)+1]], models.all)
-ncvar_put(soilcarb, TotSoilCarb.vars[[length(site.list)+1]], models.all)
-ncvar_put(evap, Evap.vars[[length(site.list)+1]], models.all)
-# ncvar_put(transp, Transp.vars[[length(site.list)+1]], models.all)
-ncvar_put(soilmoist, SoilMoist.vars[[length(site.list)+1]], models.all)
+ncvar_put(auto.resp  , AutoResp.vars[[length(site.list)+1]]   , models.all)
+ncvar_put(hetero.resp, HeteroResp.vars[[length(site.list)+1]] , models.all)
+ncvar_put(soilcarb   , TotSoilCarb.vars[[length(site.list)+1]], models.all)
+ncvar_put(evap       , Evap.vars[[length(site.list)+1]]       , models.all)
+ncvar_put(soilmoist  , SoilMoist.vars[[length(site.list)+1]]  , models.all)
+# ncvar_put(transp     , Transp.vars[[length(site.list)+1]]       , models.all)
 
-nc_close(gpp); nc_close(agb); nc_close(temp); nc_close(precip); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); #nc_close(transp)
+ncvar_put(tair   , tair.vars[[length(site.list)+1]]   , models.all)
+ncvar_put(precipf, precipf.vars[[length(site.list)+1]], models.all)
+ncvar_put(swdown , swdown.vars[[length(site.list)+1]] , models.all)
+ncvar_put(lwdown , lwdown.vars[[length(site.list)+1]] , models.all)
+ncvar_put(wind   , wind.vars[[length(site.list)+1]]   , models.all)
+ncvar_put(psurf  , psurf.vars[[length(site.list)+1]]  , models.all)
+ncvar_put(qair   , qair.vars[[length(site.list)+1]]   , models.all)
+
+
+nc_close(gpp); nc_close(agb); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); #nc_close(transp)
+nc_close(tair); nc_close(precipf); nc_close(swdown); nc_close(lwdown); nc_close(wind); nc_close(psurf); nc_close(qair);
 
 # nc <- nc_open(file.path(file.path(output.location, "GPP.annual.nc")))
 # summary(nc$var)

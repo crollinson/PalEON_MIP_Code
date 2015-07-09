@@ -1,12 +1,12 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
 library(car)
-setwd("~/Desktop/Research/PalEON CR/PalEON_MIP_Site/")
+setwd("~/Dropbox/PalEON CR/PalEON_MIP_Site/")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
-model.dir <- "~/Desktop/Research/PalEON CR/PalEON_MIP_Site/phase1a_model_output"
+model.dir <- "phase1a_model_output"
 #model.dir <- "phase1a_model_output/"
 
 #~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output
