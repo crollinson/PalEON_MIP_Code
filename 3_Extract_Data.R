@@ -170,10 +170,10 @@ for(i in 1:length(sites)){
 
 	# write in the temp & precip data for models that didn't give it back and just assume it's fine
 	for(y in years){
-		tair.df[(tair.df$Model=="linkages" | tair.df$Model=="lpj.wsl") & tair.df$Year==y, "Temp"] <- tair.df[tair.df$Model=="lpj.guess" & tair.df$Year==y, "tair"]
-		precipf.df[(precipf.df$Model=="linkages" | precipf.df$Model=="lpj.wsl") & precipf.df$Year==y, "Precip"] <- precipf.df[precipf.df$Model=="lpj.guess" & precipf.df$Year==y, "precipf"]
-		swdown.df[(swdown.df$Model=="lpj.wsl") & swdown.df$Year==y, "Precip"] <- swdown.df[swdown.df$Model=="jules.stat" & swdown.df$Year==y, "swdown"]
-		lwdown.df[(lwdown.df$Model=="lpj.wsl") & lwdown.df$Year==y, "Precip"] <- lwdown.df[lwdown.df$Model=="jules.stat" & lwdown.df$Year==y, "lwdown"]
+		tair.df[(tair.df$Model=="linkages" | tair.df$Model=="lpj.wsl") & tair.df$Year==y, "tair"] <- tair.df[tair.df$Model=="lpj.guess" & tair.df$Year==y, "tair"]
+		precipf.df[(precipf.df$Model=="linkages" | precipf.df$Model=="lpj.wsl") & precipf.df$Year==y, "precipf"] <- precipf.df[precipf.df$Model=="lpj.guess" & precipf.df$Year==y, "precipf"]
+		swdown.df[(swdown.df$Model=="lpj.wsl") & swdown.df$Year==y, "swdown"] <- swdown.df[swdown.df$Model=="sibcasa" & swdown.df$Year==y, "swdown"]
+		lwdown.df[(lwdown.df$Model=="lpj.wsl") & lwdown.df$Year==y, "lwdown"] <- lwdown.df[lwdown.df$Model=="sibcasa" & lwdown.df$Year==y, "lwdown"]
 	}	
 
 	if(i == 1) {
