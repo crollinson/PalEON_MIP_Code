@@ -28,7 +28,7 @@ mo2sec <- 1/(12*24*60*60)
 dir.ed <- file.path(model.dir, "ED2.v6", site.list[1])
 files.ed <- dir(dir.ed)
 
-dir.ed.lu <- file.path(model.dir, "ED2-LU.v4", site.list[1])
+dir.ed.lu <- file.path(model.dir, "ED2-LU.v5", site.list[1])
 files.ed.lu <- dir(dir.ed.lu)
 
 dir.clm.bgc <- file.path(model.dir, "CLM-BGC.v4", site.list[1])
@@ -72,7 +72,6 @@ sib         <- nc_open(file.path(dir.sib, files.sib[1]))
 
 # extracting variable names
 ed.var <- names(ed$var)
-
 ed.lu.var <- names(ed.lu$var)
 clm.bgc.var <- names(clm.bgc$var)
 clm.cn.var <- names(clm.bgc$var)
@@ -242,7 +241,7 @@ for(i in 1:length(ed.var)){
 ed.lu <- list()
 ed.lu.diversity <- list()
 for(s in 1:length(site.list)){
-  dir.ed.lu <- file.path(model.dir, "ED2-LU.v4", site.list[s])
+  dir.ed.lu <- file.path(model.dir, "ED2-LU.v5", site.list[s])
   files.ed.lu <- dir(dir.ed.lu)
   
   #  nee.temp <- npp.temp <- rh.temp <- ah.temp <- gpp.temp <- vector()
