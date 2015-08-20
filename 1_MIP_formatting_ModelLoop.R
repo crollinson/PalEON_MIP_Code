@@ -1,7 +1,7 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
 library(car)
-setwd("~/Dropbox/PalEON CR/PalEON_MIP_Site/")
+setwd("~/Desktop/Dropbox//PalEON CR/PalEON_MIP_Site/")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
@@ -36,7 +36,7 @@ dir.clm.cn <- file.path(model.dir, "CLM-CN.v2", site.list[1])
 files.clm.bgc <- dir(dir.clm.bgc)
 files.clm.cn <- dir(dir.clm.cn)
 
-dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v6", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
 files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
@@ -387,7 +387,7 @@ for(i in 1:length(clm.cn.var)){
 lpj.g <- list()
 lpj.pft <- c(which(lpj.g.var.y=="AGB"), which(lpj.g.var.y=="TotLivBiom"))
 for(s in 1:length(site.list)){
-  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[s], "LPJ-GUESS", sep="_"))
+  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v6", paste(site.list[s], "LPJ-GUESS", sep="_"))
   files.lpj.g <- dir(dir.lpj.g)
   
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly

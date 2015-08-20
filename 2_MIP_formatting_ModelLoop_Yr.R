@@ -283,7 +283,7 @@ for(s in 1:length(site.list)){
 
 	# Extracting Soil from LPJ.G
 	lpj.g.soilC <- vector()
-    dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[1], "LPJ-GUESS", sep="_"))
+    dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v6", paste(site.list[1], "LPJ-GUESS", sep="_"))
     # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v2", paste(site.list[1], "LPJ-GUESS", sep="_"))
 	files.lpj.g <- dir(dir.lpj.g)
   
