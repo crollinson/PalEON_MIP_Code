@@ -2,12 +2,12 @@
 # Doing some EDA to make sure the ED runs are at least somewhat on par with others
 library(ncdf4)
 library(car)
-#setwd("~/Desktop/PalEON CR/PalEON_MIP_Site/phase1a_model_output")
+#setwd("~/Desktop/PalEON_CR/PalEON_MIP_Site/phase1a_model_output")
 
 # ------------------------------------------------
 # Setting up to compare the inital data from the models
 # ------------------------------------------------
-model.dir <- "~/Dropbox/PalEON CR/PalEON_MIP_Site/phase1a_model_output"
+model.dir <- "~/Dropbox/PalEON_CR/PalEON_MIP_Site/phase1a_model_output"
 
 # Models for which we have data
 model.list <- dir(model.dir)
@@ -23,7 +23,7 @@ mo2sec <- 1/(12*24*60*60)
 # Extracting Variables names to make life easier
 # ------------------------------------------------------------------------
 # Setting up directories to pull an example file
-dir.ed <- file.path(model.dir, "ED2.v6", site.list[1])
+dir.ed <- file.path(model.dir, "ED2.v7", site.list[1])
 files.ed <- dir(dir.ed)
 
 dir.ed.lu <- file.path(model.dir, "ED2-LU.v5", site.list[1])
@@ -34,7 +34,7 @@ dir.clm.cn <- file.path(model.dir, "CLM-CN.v2", site.list[1])
 files.clm.bgc <- dir(dir.clm.bgc)
 files.clm.cn <- dir(dir.clm.cn)
 
-dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[1], "LPJ-GUESS", sep="_"))
+dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v6", paste(site.list[1], "LPJ-GUESS", sep="_"))
 files.lpj.g <- dir(dir.lpj.g)
 index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
 files.lpj.g.m <- files.lpj.g[substr(files.lpj.g, index, index+4)=="month"]
@@ -91,7 +91,7 @@ ed.pft <- ncvar_get(ed, "PFT")
 lpj.g.pft <- ncvar_get(lpj.g.y, "PFT")
 lpj.w.pft <- c("TrBE", "TrBR", "TeNE", "TeBE", "BES", "BNE", "BBS", "C3", "C4")
 clm.pft <- c("bare", "TeNE", "BNE", "BNS", "TrBE", "TeBE", "TrBS", "TeBS", "BBS", "SBD", "TeSBS", "BSBS", "C3_arctic", "C3", "C4", "corn", "wheat")
-jules.var <- 
+# jules.var <- 
 
 
 # ------------------------------------------------------------------------
@@ -103,7 +103,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------  
   # ED
   #-----------------------------------
-  dir.ed <- file.path(model.dir, "ED2.v6", site.list[s])   
+  dir.ed <- file.path(model.dir, "ED2.v7", site.list[s])   
   files.ed <- dir(dir.ed)
   #ed.var.list <- list()
   # File loop extracting time series by variable group
@@ -148,7 +148,7 @@ for(s in 1:length(site.list)){
   #-----------------------------------
   # LPJ-Guess
   #-----------------------------------
-  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v5", paste(site.list[s], "LPJ-GUESS", sep="_"))   
+  dir.lpj.g <- file.path(model.dir, "LPJ-GUESS.v6", paste(site.list[s], "LPJ-GUESS", sep="_"))   
   # dir.lpj.g <- file.path(model.dir, "LPJ-GUESS", paste(site.list[s], "LPJ-GUESS", sep="_"))   
   files.lpj.g <- dir(dir.lpj.g)
   index <- gregexpr("month",files.lpj.g[2])[[1]][1] # LPJ-GUESS has separate annual and monthly files & we just want the monthly
@@ -219,7 +219,7 @@ lines(ed.fcomp[[1]][,c(10)], col=pft.colors.ed[4], lwd=3)
 lines(ed.fcomp[[1]][,c(11)], col=pft.colors.ed[5], lwd=3)
 legend(x=8000, y=0.6, legend=pfts.ed, col=pft.colors.ed, bty="n", bg="white", lwd=3)
 
-pdf(width=11, height=8.5, file="PrelimGraphs/ED_Paleon_Prelim_Fcomp.pdf")
+pdf(width=11, height=8.5, file="../PrelimGraphs/ED_Paleon_Prelim_Fcomp.pdf")
 par(mfrow=c(3,2), mar=c(3,5,1,1)+.1)
 for(i in 1:length(site.list)){
 plot(ed.fcomp[[i]][,6], type="l", ylim=c(0,1), col=pft.colors.ed[1], lwd=2, xlab="", ylab="Fraction of AGB")
