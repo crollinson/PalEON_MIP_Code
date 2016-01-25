@@ -858,7 +858,7 @@ psurf.vars[[length(site.list)+1]]   <- ncvar_def("ModelNames", units="", dim=lis
 qair.vars[[length(site.list)+1]]    <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
 
-names(GPP.vars) <- names(AGB.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- names(Evergreen.vars) <- names(Deciduous.vars) <- names(Grass.vars) <- names(tair.vars) <- names(precipf.vars) <- names(swdown.vars) <- names(lwdown.vars) <- names(wind.vars) <- names(psurf.vars) <- names(qair.vars) <- c(site.list, "ModelNames")
+names(GPP.vars) <- names(AGB.vars) <- names(LAI.vars) <- names(NEE.vars) <- names(NPP.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- names(Evergreen.vars) <- names(Deciduous.vars) <- names(Grass.vars) <- names(tair.vars) <- names(precipf.vars) <- names(swdown.vars) <- names(lwdown.vars) <- names(wind.vars) <- names(psurf.vars) <- names(qair.vars) <- c(site.list, "ModelNames")
 summary(GPP.vars)
 summary(NPP.vars)
 
@@ -947,7 +947,7 @@ ncvar_put(psurf  , psurf.vars[[length(site.list)+1]]  , models.all)
 ncvar_put(qair   , qair.vars[[length(site.list)+1]]   , models.all)
 
 
-nc_close(gpp); nc_close(agb); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); nc_close(evergreen); nc_close(deciduous); nc_close(grass); #nc_close(transp)
+nc_close(gpp); nc_close(agb); nc_close(lai); nc_close(nee); nc_close(npp); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); nc_close(evergreen); nc_close(deciduous); nc_close(grass); #nc_close(transp)
 nc_close(tair); nc_close(precipf); nc_close(swdown); nc_close(lwdown); nc_close(wind); nc_close(psurf); nc_close(qair);
 
 # nc <- nc_open(file.path(file.path(output.location, "GPP.annual.nc")))

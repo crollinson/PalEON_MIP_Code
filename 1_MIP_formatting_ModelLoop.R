@@ -606,10 +606,12 @@ for(s in 1:length(site.list)){
 	  decid <- jules.s.var.list[["Deciduous"]]
 	  grass <- jules.s.var.list[["Grass"]]
     }
-	lai.tot <- colSums(ncvar_get(ncMT, "LAI"))
-    jules.s.var.list[["Evergreen"]] <- c(evg  , ncvar_get(ncMT, "LAI")[2,]/lai.tot)
-    jules.s.var.list[["Deciduous"]] <- c(decid, ncvar_get(ncMT, "LAI")[1,]/lai.tot)
-    jules.s.var.list[["Grass"    ]] <- c(grass, colSums(ncvar_get(ncMT, "LAI")[3:5,]/lai.tot))
+	lai.df  <- data.frame(t(ncvar_get(ncMT, "LAI"))) 
+	lai.tot <- rowSums(lai.df)
+	
+    jules.s.var.list[["Evergreen"]] <- c(evg  , lai.df[,2]/lai.tot)
+    jules.s.var.list[["Deciduous"]] <- c(decid, lai.df[,1]/lai.tot)
+    jules.s.var.list[["Grass"    ]] <- c(grass, rowSums(lai.df[,3:5])/lai.tot)
     # ----------------------
     nc_close(ncMT)      
   }
@@ -674,9 +676,12 @@ for(s in 1:length(site.list)){
     }
 	lai.tot <- colSums(ncvar_get(ncMT, "LAI"))
 
-    jules.triff.var.list[["Evergreen"]] <- c(evg  , ncvar_get(ncMT, "LAI")[2,])/lai.tot
-    jules.triff.var.list[["Deciduous"]] <- c(decid, ncvar_get(ncMT, "LAI")[1,])/lai.tot
-    jules.triff.var.list[["Grass"    ]] <- c(grass, colSums(ncvar_get(ncMT, "LAI")[3:5,]))/lai.tot
+	lai.df  <- data.frame(t(ncvar_get(ncMT, "LAI"))) 
+	lai.tot <- rowSums(lai.df)
+	
+    jules.triff.var.list[["Evergreen"]] <- c(evg  , lai.df[,2]/lai.tot)
+    jules.triff.var.list[["Deciduous"]] <- c(decid, lai.df[,1]/lai.tot)
+    jules.triff.var.list[["Grass"    ]] <- c(grass, rowSums(lai.df[,3:5])/lai.tot)
     # ----------------------
     nc_close(ncMT)      
   }
