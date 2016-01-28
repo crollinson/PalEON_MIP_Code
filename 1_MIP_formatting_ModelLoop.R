@@ -536,11 +536,10 @@ for(s in 1:length(site.list)){
 	# ----------------------
 	# Adding in Fraction Evergreen Tree, Deciduous Tree, Grass
 	# ----------------------
-	test <- ncvar_get(ncMT, "Fcomp")
-    test <- rowSums(ncvar_get(ncMT, "Fcomp")[c(1,3:4,6),])
-    lpj.w.var.list[["Evergreen"]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(1,3:4,6)])
-    lpj.w.var.list[["Deciduous"]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(2,5,7)])
-    lpj.w.var.list[["Grass"    ]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(8:9)])
+    w.fcomp <- rowSums(ncvar_get(ncMT, "Fcomp")[c(1,3:4,6),])
+    lpj.w.var.list[["Evergreen"]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(1,3:4,6)])/w.fcomp
+    lpj.w.var.list[["Deciduous"]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(2,5,7)])/w.fcomp
+    lpj.w.var.list[["Grass"    ]] <- rowSums(ncvar_get(ncMT, "Fcomp")[,c(8:9)])/w.fcomp
     # ----------------------
   nc_close(ncMT)      
 
