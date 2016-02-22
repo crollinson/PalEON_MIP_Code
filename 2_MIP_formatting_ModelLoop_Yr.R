@@ -14,11 +14,11 @@ sec2yr <- 1*60*60*24*365
 # ---------------------------------------------- #
 # Variables that exist for all models, but need to be aggregated to year for comparision with LPJ
 
-AGB.y <- TotLivBiom <- TotSoilCarb <- LAI.y <- GPP.y <- NEE.y <- NPP.y <- HeteroResp.y <- AutoResp.y <- LAI.y  <- Qs.y <- SoilMoist.y <- SoilTemp.y <- Evap.y <- Transp.y <- Fcomp.y <- Dens.y <- BA.y <- Evergreen.y <- Deciduous.y <- Grass.y <- list()
+AGB.y <- TotLivBiom <- TotSoilCarb <- LAI.y <- GPP.y <- NEE.y <- NPP.y <- HeteroResp.y <- AutoResp.y <- LAI.y  <- Qs.y <- SoilMoist.y <- SoilTemp.y <- Evap.y <- Transp.y <- Fcomp.y <- Dens.y <- BA.y <- Evergreen.y <- Deciduous.y <- Grass.y <- Fire.y <- list()
 
 tair.y <- precipf.y <- wind.y <- lwdown.y <- swdown.y <- qair.y <- psurf.y <- list()
 
-var1 <- c("NEE", "NPP", "HeteroResp", "AutoResp", "GPP", "LAI.m", "Evap", "Qs", "SoilMoist", "SoilTemp", "SWE", "Transp", "Fcomp", "Dens", "BA")
+var1 <- c("NEE", "NPP", "HeteroResp", "AutoResp", "Fire", "GPP", "LAI.m", "Evap", "Qs", "SoilMoist", "SoilTemp", "SWE", "Transp", "Fcomp", "Dens", "BA")
 for(i in 1:length(var1)){
   assign(var1[i], list())
 }
@@ -311,6 +311,28 @@ for(s in 1:length(site.list)){
                                     jules.triffid = jules.triff.temp, 
                                     linkages      = NA, 
                                     sibcasa       = sib.temp)   
+
+    #-----------------------------------
+	# Fire
+    #-----------------------------------
+    for(i in 1:length(yr.rows)){
+     if(i==1) ed.temp <- ed.lu.temp <- clm.bgc.temp <- clm.cn.temp <- jules.temp <- jules.triff.temp <- lpj.w.temp <- lpj.g.temp <- linkages.temp <- sib.temp <- vector()
+      ed.temp <- c(ed.temp, mean(ed[["Fire"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      ed.lu.temp <- c(ed.lu.temp, mean(ed.lu[["Fire"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.bgc.temp <- c(clm.bgc.temp, mean(clm.bgc[["FIRE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+      clm.cn.temp <- c(clm.cn.temp, mean(clm.cn[["FIRE"]][yr.rows[i]:(yr.rows[i]+11),s]))
+	  }
+
+    Fire.y[[s]] <- data.frame(ed2           = ed.temp, 
+                              ed2.lu        = ed.lu.temp, 
+                              clm.bgc       = clm.bgc.temp, 
+                              clm.cn        = clm.cn.temp, 
+                              lpj.wsl       = lpj.w[["Fire"]][,s], 
+                              lpj.guess     = lpj.g[["Fire"]][,s]/sec2yr, 
+                              jules.stat    = NA, 
+                              jules.triffid = NA, 
+                              linkages      = NA, 
+                              sibcasa       = NA)   
 
 	#---------------------------------------------------------------------
 	# CARBON POOLS
@@ -772,7 +794,7 @@ for(s in 1:length(site.list)){
 }
 
 
-names(AGB.y) <- names(TotLivBiom) <- names(TotSoilCarb) <- names(LAI.y) <- names(GPP.y) <- names(NEE.y) <- names(NPP.y) <- names(HeteroResp.y) <- names(AutoResp.y) <- names(LAI.y)  <- names(Qs.y) <- names(SoilMoist.y) <- names(SoilTemp.y) <- names(Evap.y) <- names(Transp.y) <- names(Fcomp.y) <- names(Dens.y) <- names(BA.y) <- site.list
+names(AGB.y) <- names(TotLivBiom) <- names(TotSoilCarb) <- names(LAI.y) <- names(GPP.y) <- names(NEE.y) <- names(NPP.y) <- names(HeteroResp.y) <- names(AutoResp.y) <- names(LAI.y)  <- names(Qs.y) <- names(SoilMoist.y) <- names(SoilTemp.y) <- names(Evap.y) <- names(Transp.y) <- names(Fcomp.y) <- names(Dens.y) <- names(BA.y) <- names(Fire.y) <- site.list
 
 
 
@@ -798,7 +820,7 @@ units.comp       <- "fraction"
 
 models.all <- names(GPP.y[[1]])
 
-GPP.vars <- AGB.vars <- LAI.vars <-  NEE.vars <- NPP.vars <- AutoResp.vars <- HeteroResp.vars <- TotSoilCarb.vars <- Evap.vars <- Transp.vars <- SoilMoist.vars <- Evergreen.vars <- Deciduous.vars <- Grass.vars <- list()
+GPP.vars <- AGB.vars <- LAI.vars <-  NEE.vars <- NPP.vars <- AutoResp.vars <- HeteroResp.vars <- TotSoilCarb.vars <- Evap.vars <- Transp.vars <- SoilMoist.vars <- Evergreen.vars <- Deciduous.vars <- Grass.vars <- Fire.vars <- list()
 
 tair.vars <- precipf.vars <- swdown.vars <- lwdown.vars <- wind.vars <- psurf.vars <- qair.vars <- list()
 
@@ -808,6 +830,7 @@ for(i in 1:length(site.list)){
 	LAI.vars[[i]] <- ncvar_def(site.list[i], units=units.lai,    dim=list(dim.allmods, dim.years))
 	NEE.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	NPP.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
+	Fire.vars[[i]] <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 
 	AutoResp.vars[[i]]    <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
 	HeteroResp.vars[[i]]  <- ncvar_def(site.list[i], units=units.fluxes, dim=list(dim.allmods, dim.years))
@@ -837,6 +860,7 @@ AGB.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(di
 LAI.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NPP.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 NEE.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
+Fire.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
 AutoResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 HeteroResp.vars[[length(site.list)+1]] <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
@@ -858,16 +882,17 @@ psurf.vars[[length(site.list)+1]]   <- ncvar_def("ModelNames", units="", dim=lis
 qair.vars[[length(site.list)+1]]    <- ncvar_def("ModelNames", units="", dim=list(dim.string, dim.allmods2), prec="char")
 
 
-names(GPP.vars) <- names(AGB.vars) <- names(LAI.vars) <- names(NEE.vars) <- names(NPP.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- names(Evergreen.vars) <- names(Deciduous.vars) <- names(Grass.vars) <- names(tair.vars) <- names(precipf.vars) <- names(swdown.vars) <- names(lwdown.vars) <- names(wind.vars) <- names(psurf.vars) <- names(qair.vars) <- c(site.list, "ModelNames")
+names(GPP.vars) <- names(AGB.vars) <- names(LAI.vars) <- names(NEE.vars) <- names(NPP.vars) <- names(Fire.vars) <- names(AutoResp.vars) <- names(HeteroResp.vars) <- names(TotSoilCarb.vars) <- names(Evap.vars) <- names(Transp.vars) <- names(SoilMoist.vars) <- names(Evergreen.vars) <- names(Deciduous.vars) <- names(Grass.vars) <- names(tair.vars) <- names(precipf.vars) <- names(swdown.vars) <- names(lwdown.vars) <- names(wind.vars) <- names(psurf.vars) <- names(qair.vars) <- c(site.list, "ModelNames")
 summary(GPP.vars)
 summary(NPP.vars)
 
 output.location <- "phase1a_output_variables"
-gpp <- nc_create(file.path(output.location, "GPP.annual.nc"), GPP.vars)
-agb <- nc_create(file.path(output.location, "AGB.annual.nc"), AGB.vars)
-lai <- nc_create(file.path(output.location, "LAI.annual.nc"), LAI.vars)
-npp <- nc_create(file.path(output.location, "NPP.annual.nc"), NPP.vars)
-nee <- nc_create(file.path(output.location, "NEE.annual.nc"), NEE.vars)
+gpp  <- nc_create(file.path(output.location, "GPP.annual.nc"), GPP.vars)
+agb  <- nc_create(file.path(output.location, "AGB.annual.nc"), AGB.vars)
+lai  <- nc_create(file.path(output.location, "LAI.annual.nc"), LAI.vars)
+npp  <- nc_create(file.path(output.location, "NPP.annual.nc"), NPP.vars)
+nee  <- nc_create(file.path(output.location, "NEE.annual.nc"), NEE.vars)
+fire <- nc_create(file.path(output.location, "Fire.annual.nc"), Fire.vars)
 auto.resp   <- nc_create(file.path(output.location, "RespirationAuto.annual.nc"  ), AutoResp.vars)
 hetero.resp <- nc_create(file.path(output.location, "RespirationHetero.annual.nc"), HeteroResp.vars)
 soilcarb    <- nc_create(file.path(output.location, "TotSoilCarb.annual.nc"      ), TotSoilCarb.vars)
@@ -895,6 +920,7 @@ for(i in 1:length(site.list)){
 	ncvar_put(agb, AGB.vars[[i]], t(AGB.y[[i]]))
 	ncvar_put(lai, LAI.vars[[i]], t(LAI.y[[i]]))
 	ncvar_put(nee, NEE.vars[[i]], t(NEE.y[[i]]))
+	ncvar_put(fire, Fire.vars[[i]], t(Fire.y[[i]]))
 
 	ncvar_put(auto.resp  , AutoResp.vars[[i]]   , t(AutoResp.y[[i]])   )
 	ncvar_put(hetero.resp, HeteroResp.vars[[i]] , t(HeteroResp.y[[i]]) )
@@ -927,6 +953,7 @@ ncvar_put(agb, AGB.vars[[length(site.list)+1]], models.all)
 ncvar_put(lai, LAI.vars[[length(site.list)+1]], models.all)
 ncvar_put(npp, NPP.vars[[length(site.list)+1]], models.all)
 ncvar_put(nee, NEE.vars[[length(site.list)+1]], models.all)
+ncvar_put(fire, Fire.vars[[length(site.list)+1]], models.all)
 
 ncvar_put(auto.resp  , AutoResp.vars[[length(site.list)+1]]   , models.all)
 ncvar_put(hetero.resp, HeteroResp.vars[[length(site.list)+1]] , models.all)
@@ -947,7 +974,7 @@ ncvar_put(psurf  , psurf.vars[[length(site.list)+1]]  , models.all)
 ncvar_put(qair   , qair.vars[[length(site.list)+1]]   , models.all)
 
 
-nc_close(gpp); nc_close(agb); nc_close(lai); nc_close(nee); nc_close(npp); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); nc_close(evergreen); nc_close(deciduous); nc_close(grass); #nc_close(transp)
+nc_close(gpp); nc_close(agb); nc_close(lai); nc_close(nee); nc_close(npp); nc_close(fire); nc_close(auto.resp); nc_close(hetero.resp); nc_close(soilcarb); nc_close(evap); nc_close(soilmoist); nc_close(evergreen); nc_close(deciduous); nc_close(grass); #nc_close(transp)
 nc_close(tair); nc_close(precipf); nc_close(swdown); nc_close(lwdown); nc_close(wind); nc_close(psurf); nc_close(qair);
 
 # nc <- nc_open(file.path(file.path(output.location, "GPP.annual.nc")))
